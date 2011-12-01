@@ -17,12 +17,29 @@ public:
 			_source(source), _target(target), _weight(weight) {
 	}
 
+	/**
+	 * Returns the node ID of the source node.
+	 *
+	 * @return the source node
+	 */
 	const unsigned int &getSource() const {
 		return _source;
 	}
+
+	/**
+	 * Returns the node ID of the target node.
+	 *
+	 * @return the target node
+	 */
 	const unsigned int &getTarget() const {
 		return _target;
 	}
+
+	/**
+	 * Returns the length of this edge in decimeters.
+	 *
+	 * @return the length of this edge
+	 */
 	unsigned int getWeight() const {
 		return _weight;
 	}
@@ -34,6 +51,5 @@ inline std::ostream &operator<<(std::ostream &stream, const Edge &edge) {
 			<< edge.getWeight();
 	return stream;
 }
-
 
 #endif

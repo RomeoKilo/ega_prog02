@@ -31,6 +31,8 @@ public:
 
 	void print() const;
 
+	const Node &nodeForID(const unsigned int id) const;
+
 	unsigned int getNodeCount() const;
 	unsigned int getEdgeCount() const;
 	unsigned int getMaxEdgeLength() const;

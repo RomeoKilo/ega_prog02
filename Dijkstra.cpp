@@ -18,11 +18,7 @@ struct STR {
 
 int main(int argc, char *argv[]) {
 
-	shared_ptr<AdjacencyArray> adjArr = AdjacencyArray::fromFile("../../prog02/samples/sample2.graph", true);
 
-	adjArr->print();
-
-	return 0;
 
 	int errorcode = 0;
 	if (argc == 1) {
@@ -36,6 +32,10 @@ int main(int argc, char *argv[]) {
 		std::cerr << "File '" << filename << "' is not accessible!" << std::endl;
 		errorcode = -4;
 	}
+
+	shared_ptr<AdjacencyArray> adjArr = AdjacencyArray::fromFile(filename, true);
+
+//	adjArr->print();
 
 	int source = -1;
 	int target = -1;

@@ -19,6 +19,10 @@ unsigned int AdjacencyArray::getMaxEdgeLength() const {
 bool AdjacencyArray::hasBackwardMapping() const {
 	return _hasBackwardMapping;
 }
+
+const Node &AdjacencyArray::nodeForID(const unsigned int id) const{
+	return _node_list[id];
+}
 OutgoingEdgeIterator AdjacencyArray::outgoingOf(const unsigned int node) const {
 	const unsigned int start = _forward_nodes.at(node);
 	const unsigned int end = _forward_nodes.at(node + 1);
@@ -104,13 +108,6 @@ shared_ptr<AdjacencyArray> AdjacencyArray::fromFile(const std::string &filename,
 
 			// dummy entry pointing beyond the end of the edge array
 			adjArray._backward_nodes[nodecount] = edgecount;
-		}
-
-		for (int i = 0;
-				i < (generateBackwardMapping ? 2 * edgecount : edgecount);
-				++i) {
-			const Edge &edge = adjArray._edge_list[i];
-			std::cout << edge << std::endl;
 		}
 
 		// Fill the actual adjacency array

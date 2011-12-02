@@ -1,11 +1,10 @@
-#ifndef DIAL_DIJKSTRA_HPP_
-#define DIAL_DIJKSTRA_HPP_
+#ifndef BH_DIJKSTRA_HPP_
+#define BH_DIJKSTRA_HPP_
 
 #include <tr1/memory>
-class AdjacencyArray;
 class CalculationResult;
-
-class DialDijkstra {
+class AdjacencyArray;
+class BHDijkstra {
 public:
 	static const CalculationResult runStandard(
 			const std::tr1::shared_ptr<AdjacencyArray> graph,

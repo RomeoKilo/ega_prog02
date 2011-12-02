@@ -1,6 +1,9 @@
-#include "common/BinaryHeap.hpp"
+#include "algos/BHDijkstra.hpp"
+#include "algos/DialDijkstra.hpp"
 #include "common/AdjacencyArray.hpp"
+#include "common/CalculationResult.hpp"
 
+#include <tr1/memory>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -9,16 +12,7 @@
 
 using std::tr1::shared_ptr;
 
-struct STR {
-	int i;
-	STR(int i) :
-			i(i) {
-	}
-};
-
 int main(int argc, char *argv[]) {
-
-
 
 	int errorcode = 0;
 	if (argc == 1) {
@@ -29,13 +23,10 @@ int main(int argc, char *argv[]) {
 	std::string filename = argv[1];
 
 	if (!std::ifstream(filename.c_str())) {
-		std::cerr << "File '" << filename << "' is not accessible!" << std::endl;
+		std::cerr << "File '" << filename << "' is not accessible!"
+				<< std::endl;
 		errorcode = -4;
 	}
-
-	shared_ptr<AdjacencyArray> adjArr = AdjacencyArray::fromFile(filename, true);
-
-//	adjArr->print();
 
 	int source = -1;
 	int target = -1;
@@ -85,9 +76,9 @@ int main(int argc, char *argv[]) {
 
 	// sanity check
 
-	if (!useBinaryHeap && !useDialsImplementation) {
+	if (!useBinaryHeap && !useDialsImplementation && !runComparison) {
 		std::cerr
-				<< "Either binary heap or Dial's implementation must be chosen! (-h or -d)"
+				<< "Either binary comparison mode,  heap or Dial's implementation must be chosen! (-a,-h or -d)"
 				<< std::endl;
 		errorcode = -1;
 	}
@@ -105,19 +96,35 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (0 == errorcode) {
-		// business logic here
-		// print some statistics
+		shared_ptr<AdjacencyArray> adjArray = AdjacencyArray::fromFile(filename,
+				true);
+		if (useBinaryHeap) {
+			if (useBidirectional) {
+				const CalculationResult result = BHDijkstra::runBidirectional(
+						adjArray, source, target);
+			} else if (useGoalDirected) {
+				const CalculationResult result = BHDijkstra::runGoalDirected(adjArray, source, target);
+			} else {
+				const CalculationResult result = BHDijkstra::runStandard(adjArray, source, target);
+			}
+		} else if (useDialsImplementation) {
+			if (useBidirectional) {
+				const CalculationResult result = DialDijkstra::runBidirectional(adjArray, source,
+						target);
+			} else if (useGoalDirected) {
+				const CalculationResult result = DialDijkstra::runGoalDirected(adjArray, source,
+						target);
+			} else {
+				const CalculationResult result = DialDijkstra::runStandard(adjArray, source, target);
+			}
+		} else //comparison
+		{
+
+		}
 	} else {
 		std::cerr
 				<< "Encountered problem while parsing command line options. Will now abort."
 				<< std::endl;
 	}
-	std::cerr << "file: " << filename << std::endl;
-	std::cerr << "bidi " << useBidirectional << std::endl;
-	std::cerr << "binary " << useBinaryHeap << std::endl;
-	std::cerr << "goal " << useGoalDirected << std::endl;
-	std::cerr << "dial " << useDialsImplementation << std::endl;
-	std::cerr << source << std::endl;
-	std::cerr << target << std::endl;
 	return errorcode;
 }

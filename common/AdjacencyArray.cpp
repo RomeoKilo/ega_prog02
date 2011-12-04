@@ -34,7 +34,7 @@ IncomingEdgeIterator AdjacencyArray::incomingOf(const unsigned int node) const {
 	return IncomingEdgeIterator(start, end, *this);
 }
 
-shared_ptr<AdjacencyArray> AdjacencyArray::fromFile(const std::string &filename,
+shared_ptr<const AdjacencyArray> AdjacencyArray::fromFile(const std::string &filename,
 		const bool generateBackwardMapping) {
 
 	FILE *input = fopen(filename.c_str(), "r");
@@ -79,11 +79,11 @@ shared_ptr<AdjacencyArray> AdjacencyArray::fromFile(const std::string &filename,
 		for (unsigned int i = 0; i < edgecount; ++i) {
 			unsigned int start;
 			unsigned int target;
-			unsigned int weight;
+			unsigned int weight; // in decimeters
 
 			fscanf(input, "e %d %d %d\n", &start, &target, &weight);
 
-			adjArray._edge_list.at(i) = Edge(start, target, weight);
+			adjArray._edge_list.at(i) = Edge(start, target, weight * 10);
 			++adjArray._forward_nodes[start];
 
 			if (generateBackwardMapping) {

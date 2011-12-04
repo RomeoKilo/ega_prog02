@@ -36,7 +36,7 @@ public:
 	}
 
 	/**
-	 * Returns the length of this edge in decimeters.
+	 * Returns the length of this edge in meters.
 	 *
 	 * @return the length of this edge
 	 */

@@ -9,38 +9,37 @@
 #include <iterator>
 #include <algorithm>
 
-template<typename T>
 class BinaryHeap {
 private:
 	// the actual heap items
-	std::vector<HeapItem<T> > _items;
+	std::vector<HeapItem> _items;
 	// each item i is an index in _items
 	std::vector<unsigned int> _binaryHeap;
 
-	void _siftUp(HeapItem<T> &item);
-	void _siftDown(HeapItem<T> &item);
+	void _siftUp(HeapItem &item);
+	void _siftDown(HeapItem &item);
 
-	bool _hasParent(const HeapItem<T> &item) {
+	bool _hasParent(const HeapItem &item) {
 		return item._getIndex() > 0;
 	}
-	HeapItem<T> &_getParent(const HeapItem<T> &item) {
+	HeapItem &_getParent(const HeapItem &item) {
 		return _items.at(_binaryHeap.at((item._getIndex() - 1) / 2));
 	}
 
-	bool _hasLeft(const HeapItem<T> &item) {
+	bool _hasLeft(const HeapItem &item) {
 		return 2 * item._getIndex() + 1 < _binaryHeap.size();
 	}
-	HeapItem<T> &_getLeft(const HeapItem<T> &item) {
+	HeapItem &_getLeft(const HeapItem &item) {
 		return _items.at(_binaryHeap.at(2 * item._getIndex() + 1));
 	}
 
-	bool _hasRight(const HeapItem<T> &item) {
+	bool _hasRight(const HeapItem &item) {
 		return 2 * item._getIndex() + 2 < _binaryHeap.size();
 	}
-	HeapItem<T> *_getRight(const HeapItem<T> &item) {
+	HeapItem &_getRight(const HeapItem &item) {
 		return _items.at(_binaryHeap.at(2 * item._getIndex() + 2));
 	}
-	void _swapItems(HeapItem<T> &item1, HeapItem<T> &item2) {
+	void _swapItems(HeapItem &item1, HeapItem &item2) {
 
 		std::swap(_binaryHeap[item1._getIndex()],
 				_binaryHeap[item2._getIndex()]);
@@ -55,9 +54,9 @@ public:
 	}
 	;
 
-	HeapItem<T> &insert(T &item, int key);
-	void decreaseKey(HeapItem<T> &item, const int key);
-	HeapItem<T> &min() const {
+	HeapItem &insert(const unsigned int item, const double key);
+	void decreaseKey(HeapItem &item, const double key);
+	const HeapItem &min() const {
 		return _items.at(_binaryHeap.at(0));
 	}
 
@@ -69,8 +68,8 @@ public:
 
 	void print() {
 		std::cout << "BH [";
-		for (std::vector<unsigned int>::const_iterator iter = _binaryHeap.begin(); iter != _binaryHeap.end(); ++iter)
-		{
+		for (std::vector<unsigned int>::const_iterator iter =
+				_binaryHeap.begin(); iter != _binaryHeap.end(); ++iter) {
 			unsigned int index = *iter;
 			std::cout << _items.at(index).getKey() << ", ";
 		}
@@ -78,46 +77,4 @@ public:
 	}
 };
 
-template<typename T>
-inline HeapItem<T> &BinaryHeap<T>::insert(T &item, const int key) {
-	_items.push_back(HeapItem<T>(item, key, _binaryHeap.size()));
-	_binaryHeap.push_back(_binaryHeap.size());
-	HeapItem<T> &result = _items.at(_binaryHeap.size() - 1);
-	this->_siftUp(result);
-	return result;
-}
-
-template<typename T>
-inline void BinaryHeap<T>::deleteMin() {
-	_binaryHeap.at(0) = _binaryHeap.size() - 1;
-	HeapItem<T> &item = _items.at(_binaryHeap.at(0));
-	item._setIndex(0);
-	this->_siftDown(item);
-}
-
-template<typename T>
-void BinaryHeap<T>::decreaseKey(HeapItem<T> &item, const int key) {
-	item._setKey(key);
-	_siftUp(item);
-}
-
-template<typename T>
-inline void BinaryHeap<T>::_siftUp(HeapItem<T> &item) {
-	while (_hasParent(item) && _getParent(item).getKey() > item.getKey()) {
-		_swapItems(item, _getParent(item));
-	}
-}
-
-template<class T>
-inline void BinaryHeap<T>::_siftDown(HeapItem<T> &item) {
-	while ((_hasLeft(item) && _getLeft(item).getKey() < item.getKey())
-			|| (_hasRight(item) && _getRight(item).getKey() < item.getKey())) {
-
-		if (_hasLeft(item) && _getLeft(item).getKey() < item.getKey()) {
-			_swapItems(item, _getLeft(item));
-		} else {
-			_swapItems(item, _getRight(item));
-		}
-	}
-}
 #endif /*BINARY_HEAP_HPP_*/

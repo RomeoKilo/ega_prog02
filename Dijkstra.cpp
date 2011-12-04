@@ -96,26 +96,26 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (0 == errorcode) {
-		shared_ptr<AdjacencyArray> adjArray = AdjacencyArray::fromFile(filename,
+		const shared_ptr<const AdjacencyArray> adjArray = AdjacencyArray::fromFile(filename,
 				true);
 		if (useBinaryHeap) {
 			if (useBidirectional) {
 				const CalculationResult result = BHDijkstra::runBidirectional(
-						adjArray, source, target);
+						*adjArray, source, target);
 			} else if (useGoalDirected) {
-				const CalculationResult result = BHDijkstra::runGoalDirected(adjArray, source, target);
+				const CalculationResult result = BHDijkstra::runGoalDirected(*adjArray, source, target);
 			} else {
-				const CalculationResult result = BHDijkstra::runStandard(adjArray, source, target);
+				const CalculationResult result = BHDijkstra::runStandard(*adjArray, source, target);
 			}
 		} else if (useDialsImplementation) {
 			if (useBidirectional) {
-				const CalculationResult result = DialDijkstra::runBidirectional(adjArray, source,
+				const CalculationResult result = DialDijkstra::runBidirectional(*adjArray, source,
 						target);
 			} else if (useGoalDirected) {
-				const CalculationResult result = DialDijkstra::runGoalDirected(adjArray, source,
+				const CalculationResult result = DialDijkstra::runGoalDirected(*adjArray, source,
 						target);
 			} else {
-				const CalculationResult result = DialDijkstra::runStandard(adjArray, source, target);
+				const CalculationResult result = DialDijkstra::runStandard(*adjArray, source, target);
 			}
 		} else //comparison
 		{

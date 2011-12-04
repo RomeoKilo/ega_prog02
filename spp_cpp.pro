@@ -3,7 +3,8 @@ CONFIG += stl \
     debug_and_release
 QMAKE_CXXFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -Wno-unused-but-set-variable
-HEADERS += algos/BHDijkstra.hpp \
+HEADERS += common/assert.hpp \
+    algos/BHDijkstra.hpp \
     common/EdgeIterator.hpp \
     Dijkstra.hpp \
     common/Timer.hpp \

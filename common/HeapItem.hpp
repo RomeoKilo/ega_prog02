@@ -5,22 +5,19 @@
 
 #include <iostream>
 
-template<typename T>
-class BinaryHeap;
-template<typename T>
 class HeapItem {
-	friend class BinaryHeap<T> ;
+	friend class BinaryHeap;
 private:
 	int _index;
 
-	T *_item;
+	unsigned int _item;
 	int _key;
 
 	void _setIndex(unsigned int i) {
 		_index = i;
 	}
 
-	int _getIndex() const {
+	unsigned int _getIndex() const {
 		return _index;
 	}
 
@@ -28,8 +25,8 @@ private:
 		_key = key;
 	}
 
-	HeapItem(T &item, const int key, const unsigned int index) :
-			_index(index), _item(&item), _key(key) {
+	HeapItem(unsigned int item, const int key, const unsigned int index) :
+			_index(index), _item(item), _key(key) {
 	}
 
 public:
@@ -37,15 +34,15 @@ public:
 		return this->_key;
 	}
 
-	HeapItem &getItem()
+	unsigned int getItem() const
 	{
-		return &_item;
+		return _item;
 	}
 
 };
 
 template<typename T>
-std::ostream& operator<<(std::ostream& lhs, const HeapItem<T> & rhs) {
+std::ostream& operator<<(std::ostream& lhs, const HeapItem &rhs) {
 	lhs << rhs.getKey();
 	return lhs;
 }

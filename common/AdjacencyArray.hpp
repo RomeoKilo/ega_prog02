@@ -40,6 +40,8 @@ public:
 	OutgoingEdgeIterator outgoingOf(const unsigned int node) const;
 	IncomingEdgeIterator incomingOf(const unsigned int node) const;
 
+	double distanceBound(const unsigned int first, const unsigned int second) const;
+
 	static std::tr1::shared_ptr<const AdjacencyArray> fromFile(
 			const std::string &filename, const bool generateBackwardMapping);
 

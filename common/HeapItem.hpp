@@ -11,9 +11,9 @@ private:
 	int _index;
 
 	unsigned int _item;
-	int _key;
+	double _key;
 
-	void _setIndex(unsigned int i) {
+	void _setIndex(const unsigned int i) {
 		_index = i;
 	}
 
@@ -21,16 +21,18 @@ private:
 		return _index;
 	}
 
-	void _setKey(int key) {
+	void _setKey(const double key) {
 		_key = key;
 	}
 
-	HeapItem(unsigned int item, const int key, const unsigned int index) :
+	HeapItem(){}
+
+	HeapItem(unsigned int item, const double key, const unsigned int index) :
 			_index(index), _item(item), _key(key) {
 	}
 
 public:
-	int getKey() const {
+	double getKey() const {
 		return this->_key;
 	}
 

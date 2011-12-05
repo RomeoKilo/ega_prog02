@@ -20,7 +20,9 @@ public:
 	}
 
 	static std::string format(const std::vector<CalculationResult> &results);
+	static std::string formattingHeader();
 	std::string format() const;
+	std::string toString() const;
 };
 
 #endif /* CALCULATION_RESULT_HPP_ */

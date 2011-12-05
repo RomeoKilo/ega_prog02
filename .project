@@ -25,7 +25,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.build.arguments</key>
-					<value></value>
+					<value>-j6</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.build.command</key>
@@ -65,7 +65,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.environment</key>
-					<value>PATH=/usr/bin:${env_var:PATH}|</value>
+					<value>PATH=/usr/bin:${env_var:PATH}:${env_var:PATH}|</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.stopOnError</key>

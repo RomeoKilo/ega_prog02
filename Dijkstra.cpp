@@ -2,6 +2,7 @@
 #include "algos/DialDijkstra.hpp"
 #include "common/AdjacencyArray.hpp"
 #include "common/CalculationResult.hpp"
+#include "common/BinaryHeap.hpp"
 
 #include <tr1/memory>
 #include <iostream>
@@ -18,6 +19,7 @@ int main(int argc, char *argv[]) {
 	if (argc == 1) {
 		std::cerr << "Usage: Dijkstra <filename> -s <src> -t <dst> <options>"
 				<< std::endl;
+		return 1;
 	}
 
 	std::string filename = argv[1];
@@ -96,26 +98,35 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (0 == errorcode) {
-		const shared_ptr<const AdjacencyArray> adjArray = AdjacencyArray::fromFile(filename,
-				true);
+		const shared_ptr<const AdjacencyArray> adjArray =
+				AdjacencyArray::fromFile(filename, true);
 		if (useBinaryHeap) {
 			if (useBidirectional) {
 				const CalculationResult result = BHDijkstra::runBidirectional(
 						*adjArray, source, target);
+				std::cout << result.toString() << std::endl;
 			} else if (useGoalDirected) {
-				const CalculationResult result = BHDijkstra::runGoalDirected(*adjArray, source, target);
+				const CalculationResult result = BHDijkstra::runGoalDirected(
+						*adjArray, source, target);
+				std::cout << result.toString() << std::endl;
 			} else {
-				const CalculationResult result = BHDijkstra::runStandard(*adjArray, source, target);
+				const CalculationResult result = BHDijkstra::runStandard(
+						*adjArray, source, target);
+				std::cout << result.toString() << std::endl;
 			}
 		} else if (useDialsImplementation) {
 			if (useBidirectional) {
-				const CalculationResult result = DialDijkstra::runBidirectional(*adjArray, source,
-						target);
+				const CalculationResult result = DialDijkstra::runBidirectional(
+						*adjArray, source, target);
+				std::cout << result.toString() << std::endl;
 			} else if (useGoalDirected) {
-				const CalculationResult result = DialDijkstra::runGoalDirected(*adjArray, source,
-						target);
+				const CalculationResult result = DialDijkstra::runGoalDirected(
+						*adjArray, source, target);
+				std::cout << result.toString() << std::endl;
 			} else {
-				const CalculationResult result = DialDijkstra::runStandard(*adjArray, source, target);
+				const CalculationResult result = DialDijkstra::runStandard(
+						*adjArray, source, target);
+				std::cout << result.toString() << std::endl;
 			}
 		} else //comparison
 		{

@@ -54,13 +54,17 @@ public:
 	}
 	;
 
-	HeapItem &insert(const unsigned int item, const double key);
-	void decreaseKey(HeapItem &item, const double key);
+	unsigned int insert(const unsigned int item, const double key);
+	void decreaseKey(const unsigned int heapItem, const double key);
 	const HeapItem &min() const {
 		return _items.at(_binaryHeap.at(0));
 	}
 
 	void deleteMin();
+
+	unsigned int size() const {
+		return _binaryHeap.size();
+	}
 
 	bool isEmpty() const {
 		return 0 == _items.size();

@@ -4,16 +4,27 @@
 #include <iostream>
 #include <iomanip>
 
+std::string CalculationResult::formattingHeader() {
+	std::ostringstream stream;
+	stream << std::setw(10) << std::left << "d(s,t)";
+	stream << "|" << std::setw(10) << std::left << "time(ms)";
+	stream << "|" << std::setw(10) << std::left << "PQ-ops";
+	stream << "|" << std::setw(46) << std::left << "params";
+	stream << "|" << std::endl;
+	for (unsigned int i = 0; i < 80; ++i)
+	{
+		stream << "-";
+	}
+	stream << std::endl;
+	return stream.str();
+}
+
 std::string CalculationResult::format(
 		const std::vector<CalculationResult> &results) {
-	std::ostringstream stream;
-	stream << std::setw(10) << "d(s,t)";
-	stream << std::setw(10) << "time(ms)";
-	stream << std::setw(10) << "PQ-ops";
-	stream << std::setw(50) << "params";
-	stream << std::endl;
-	for (std::vector<CalculationResult>::const_iterator iter = results.begin(); iter != results.end(); ++iter)
-	{
+
+	std::ostringstream stream(CalculationResult::formattingHeader());
+	for (std::vector<CalculationResult>::const_iterator iter = results.begin();
+			iter != results.end(); ++iter) {
 		const CalculationResult &result = *iter;
 		stream << result.format();
 	}
@@ -22,10 +33,17 @@ std::string CalculationResult::format(
 
 std::string CalculationResult::format() const {
 	std::ostringstream stream;
-	stream << std::setw(10) << _distance << std::endl;
-	stream << std::setw(10) << _calculationTime << std::endl;
-	stream << std::setw(10) << _pqOperations << std::endl;
-	stream << std::setw(50) << _parameters << std::endl;
-	stream << std::endl;
+	stream << std::setw(10) << std::left << _distance;
+	stream << "|" << std::setw(10) << std::left << _calculationTime;
+	stream << "|" << std::setw(10) << std::left << _pqOperations;
+	stream << "|" << std::setw(46) << std::left << _parameters;
+	stream << "|" << std::endl;
+	return stream.str();
+}
+
+std::string CalculationResult::toString() const {
+	std::ostringstream stream;
+	stream << CalculationResult::formattingHeader();
+	stream << this->format();
 	return stream.str();
 }

@@ -83,7 +83,7 @@ shared_ptr<const AdjacencyArray> AdjacencyArray::fromFile(const std::string &fil
 
 			fscanf(input, "e %d %d %d\n", &start, &target, &weight);
 
-			adjArray._edge_list.at(i) = Edge(start, target, weight * 10);
+			adjArray._edge_list.at(i) = Edge(start, target, weight);
 			++adjArray._forward_nodes[start];
 
 			if (generateBackwardMapping) {
@@ -161,4 +161,12 @@ void AdjacencyArray::print() const {
 //		std::cout << "v" << i << " " << -node.getLng() << " " << node.getLat()
 //				<< std::endl;
 //	}
+}
+
+double AdjacencyArray::distanceBound(const unsigned int first, const unsigned int second) const
+{
+	const Node &firstNode = _node_list.at(first);
+	const Node &secondNode = _node_list.at(second);
+
+	return Node::distance(firstNode, secondNode);
 }

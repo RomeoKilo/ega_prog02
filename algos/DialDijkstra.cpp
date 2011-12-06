@@ -39,7 +39,7 @@ const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 
 	unsigned int currentPositionInBQ = 0; // the index which holds the nodes to be selected next
 	bucketQueue[currentPositionInBQ].push_back(source);
-	bqItemForNode[source] =  --bucketQueue[currentPositionInBQ].end();
+	bqItemForNode[source] = --bucketQueue[currentPositionInBQ].end();
 	++elementsInBQ;
 	distances[source] = 0;
 	while (elementsInBQ) {
@@ -47,7 +47,8 @@ const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 		while (bucketQueue[currentPositionInBQ].empty()) {
 			currentPositionInBQ = (currentPositionInBQ + 1) % bucketCount;
 		}
-		std::list<unsigned int> &currentBucket = bucketQueue[currentPositionInBQ];
+		std::list<unsigned int> &currentBucket =
+				bucketQueue[currentPositionInBQ];
 
 		// Pop the next element from the queue
 		const unsigned int currentNode = currentBucket.front();
@@ -139,8 +140,30 @@ void DialDijkstra::print(std::list<unsigned int> *bucketQueue, unsigned int len,
 const CalculationResult DialDijkstra::runBidirectional(
 		const AdjacencyArray &graph, const unsigned int source,
 		const unsigned int target) {
+
+	unsigned int pqOps = 0;
+	Timer runtimeTimer;
+	runtimeTimer.start();
+	runtimeTimer.stop();
+	double distance = -1;
+	const double calculationTime = runtimeTimer.elapsed();
+
+	const CalculationResult result(distance, calculationTime, pqOps,
+			"dial, bidirectional");
+	return result;
 }
 const CalculationResult DialDijkstra::runGoalDirected(
 		const AdjacencyArray &graph, const unsigned int source,
 		const unsigned int target) {
+
+	unsigned int pqOps = 0;
+	Timer runtimeTimer;
+	runtimeTimer.start();
+	runtimeTimer.stop();
+	double distance = -1;
+	const double calculationTime = runtimeTimer.elapsed();
+
+	const CalculationResult result(distance, calculationTime, pqOps,
+			"dial, A*");
+	return result;
 }

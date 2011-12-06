@@ -9,7 +9,7 @@ public:
 	Node(const double lng, const double lat) :
 			_lng(lng), _lat(lat) {
 	}
-	static double distance(const Node &node1, const Node &node2);
+	static double lowerDistanceBound(const Node &node1, const Node &node2);
 	double getLat() const {
 		return _lat;
 	}

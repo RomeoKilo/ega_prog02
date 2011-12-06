@@ -4,7 +4,11 @@
 
 static const double PI = 3.141592653589793238462643383279502884197;
 
-double Node::distance(const Node &node1, const Node &node2) {
+/**
+ * Returns a lower bound for the distance ot the two given nodes.
+ * The distance is measured in decimeters.
+ */
+double Node::lowerDistanceBound(const Node &node1, const Node &node2) {
 	double lat1 = node1.getLat();
 	double long1 = node1.getLng();
 	double lat2 = node2.getLat();
@@ -33,7 +37,7 @@ double Node::distance(const Node &node1, const Node &node2) {
 	x -= (beta * cos * std::cos(long2));
 	y -= (beta * cos * std::sin(long2));
 	z -= (beta * (1 - e) * std::sin(lat2));
-// calculate distance in meters
+// calculate lowerDistanceBound in meters
 	double dist = std::sqrt((x * x) + (y * y) + (z * z));
 // apply some factor in order to obtain admissible lower bounds
 	dist *= 7.0;

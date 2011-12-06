@@ -92,14 +92,23 @@ const CalculationResult BHDijkstra::runBidirectional(
 	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
 	unsigned int pqOps = 0;
 
+	Timer runtimeTimer;
+	runtimeTimer.start();
+	unsigned int minimalTotalDistance = maxValue;
+	int meetingPoint = -1;
+
 	BinaryHeap forwardPQ;
 	BinaryHeap backwardPQ;
 
 	unsigned int forwardDistances[nodeCount];
+	bool forwardPoppedFromQueue[nodeCount];
 	unsigned int backwardDistances[nodeCount];
+	bool backwardPoppedFromQueue[nodeCount];
 	for (unsigned int i = 0; i < nodeCount; ++i) {
 		forwardDistances[i] = maxValue;
+		forwardPoppedFromQueue[i] = false;
 		backwardDistances[i] = maxValue;
+		backwardPoppedFromQueue[i] = false;
 	}
 	unsigned int forwardHeapItemForNode[nodeCount];
 	unsigned int backwardHeapItemForNode[nodeCount];
@@ -108,15 +117,126 @@ const CalculationResult BHDijkstra::runBidirectional(
 		backwardHeapItemForNode[i] = maxValue;
 	}
 
+	forwardHeapItemForNode[source] = forwardPQ.insert(source, 0);
+	forwardDistances[source] = 0;
+
+	backwardHeapItemForNode[source] = backwardPQ.insert(target, 0);
+	backwardDistances[target] = 0;
+
 	while (!forwardPQ.isEmpty() && !backwardPQ.isEmpty()) {
-		//TODO
+		// Select the queue with the smaller min-key to do the next step
+		if (forwardPQ.min().getKey() <= backwardPQ.min().getKey()) {
+			const HeapItem &top = forwardPQ.min();
+			forwardPQ.deleteMin();
+			const unsigned int currentNode = top.getItem();
+			std::cout << "F-DM: " << currentNode << std::endl;
+			forwardPoppedFromQueue[currentNode] = true;
+			++pqOps;
+
+			ASSERT(top.getKey() == forwardDistances[currentNode], "Node distances inconsistent!")
+
+			// current node has been settled by both queues
+			if (backwardPoppedFromQueue[currentNode]) {
+				break;
+			}
+
+			OutgoingEdgeIterator iterator = graph.outgoingOf(currentNode);
+			while (iterator.hasNext()) {
+				const Edge &edge = iterator.next();
+				const unsigned int other = edge.getTarget();
+
+				const double relaxedDistance = forwardDistances[currentNode]
+						+ edge.getWeight();
+
+				if (backwardDistances[other] != maxValue
+						&& forwardDistances[currentNode] + edge.getWeight()
+								+ backwardDistances[other]
+								< minimalTotalDistance) {
+					minimalTotalDistance = forwardDistances[currentNode]
+							+ edge.getWeight() + backwardDistances[other];
+					meetingPoint = other;
+				}
+
+				if (maxValue == forwardDistances[other]) {
+
+					ASSERT(forwardHeapItemForNode[other] == maxValue,
+							"Item should not be included in forward PQ!");
+
+					const unsigned int newItem = forwardPQ.insert(other,
+							relaxedDistance);
+					forwardDistances[other] = relaxedDistance;
+					forwardHeapItemForNode[other] = newItem;
+				} else if (forwardDistances[other] > relaxedDistance) {
+
+					ASSERT(forwardHeapItemForNode[other] != maxValue,
+							"Item should be included in forward PQ!");
+
+					const unsigned int othersHeapItem =
+							forwardHeapItemForNode[other];
+					forwardDistances[other] = relaxedDistance;
+					forwardPQ.decreaseKey(othersHeapItem, relaxedDistance);
+				}
+			} // iteration over outgoing edges of current node
+		} else { // Do one step with the backward search
+			const HeapItem &top = backwardPQ.min();
+			backwardPQ.deleteMin();
+			const unsigned int currentNode = top.getItem();
+			std::cout << "B-DM: " << currentNode << std::endl;
+			++pqOps;
+			backwardPoppedFromQueue[currentNode] = true;
+
+			ASSERT(top.getKey() == backwardDistances[currentNode], "Node distances inconsistent!")
+			// current node has been settled by both queues
+			if (forwardPoppedFromQueue[currentNode]) {
+				break;
+			}
+
+			IncomingEdgeIterator iterator = graph.incomingOf(currentNode);
+			while (iterator.hasNext()) {
+				const Edge &edge = iterator.next();
+				const unsigned int other = edge.getSource();
+
+				const double relaxedDistance = backwardDistances[currentNode]
+						+ edge.getWeight();
+
+				if (forwardDistances[other] != maxValue
+						&& backwardDistances[currentNode] + edge.getWeight()
+								+ forwardDistances[other]
+								< minimalTotalDistance) {
+					minimalTotalDistance = backwardDistances[currentNode]
+							+ edge.getWeight() + forwardDistances[other];
+					meetingPoint = other;
+				}
+
+				if (maxValue == backwardDistances[other]) {
+
+					ASSERT(backwardHeapItemForNode[other] == maxValue,
+							"Item should not be included in backward PQ!");
+
+					const unsigned int newItem = backwardPQ.insert(other,
+							relaxedDistance);
+					backwardDistances[other] = relaxedDistance;
+					backwardHeapItemForNode[other] = newItem;
+
+				} else if (backwardDistances[other] > relaxedDistance) {
+
+					ASSERT(backwardHeapItemForNode[other] != maxValue,
+							"Item should be included in backward PQ!");
+
+					const unsigned int othersHeapItem =
+							backwardHeapItemForNode[other];
+					backwardDistances[other] = relaxedDistance;
+					backwardPQ.decreaseKey(othersHeapItem, relaxedDistance);
+				}
+			} // iteration over outgoing edges of current node
+		}
+
 	}
 
-	Timer runtimeTimer;
-	runtimeTimer.start();
 	runtimeTimer.stop();
-	const double distance = forwardDistances[target]
-			+ backwardDistances[target];
+	ASSERT(meetingPoint > 0, "No path found!")
+	const double distance = forwardDistances[meetingPoint]
+			+ backwardDistances[meetingPoint];
 	const double calculationTime = runtimeTimer.elapsed();
 	const CalculationResult result(distance, calculationTime, pqOps,
 			"heap, bidirectional");

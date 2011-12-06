@@ -123,6 +123,7 @@ shared_ptr<const AdjacencyArray> AdjacencyArray::fromFile(const std::string &fil
 						i;
 			}
 		}
+		fclose(input);
 	} else {
 		throw "File '" + filename + "' could not be opened!";
 	}
@@ -168,5 +169,5 @@ double AdjacencyArray::distanceBound(const unsigned int first, const unsigned in
 	const Node &firstNode = _node_list.at(first);
 	const Node &secondNode = _node_list.at(second);
 
-	return Node::distance(firstNode, secondNode);
+	return Node::lowerDistanceBound(firstNode, secondNode);
 }

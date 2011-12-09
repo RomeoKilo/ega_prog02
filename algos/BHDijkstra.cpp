@@ -129,7 +129,6 @@ const CalculationResult BHDijkstra::runBidirectional(
 			const HeapItem &top = forwardPQ.min();
 			forwardPQ.deleteMin();
 			const unsigned int currentNode = top.getItem();
-			std::cout << "F-DM: " << currentNode << std::endl;
 			forwardPoppedFromQueue[currentNode] = true;
 			++pqOps;
 
@@ -181,7 +180,6 @@ const CalculationResult BHDijkstra::runBidirectional(
 			const HeapItem &top = backwardPQ.min();
 			backwardPQ.deleteMin();
 			const unsigned int currentNode = top.getItem();
-			std::cout << "B-DM: " << currentNode << std::endl;
 			++pqOps;
 			backwardPoppedFromQueue[currentNode] = true;
 

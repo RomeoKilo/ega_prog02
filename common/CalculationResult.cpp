@@ -22,7 +22,8 @@ std::string CalculationResult::formattingHeader() {
 std::string CalculationResult::format(
 		const std::vector<CalculationResult> &results) {
 
-	std::ostringstream stream(CalculationResult::formattingHeader());
+	std::ostringstream stream;
+	stream << CalculationResult::formattingHeader();
 	for (std::vector<CalculationResult>::const_iterator iter = results.begin();
 			iter != results.end(); ++iter) {
 		const CalculationResult &result = *iter;

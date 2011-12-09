@@ -130,7 +130,21 @@ int main(int argc, char *argv[]) {
 			}
 		} else //comparison
 		{
+			std::vector<CalculationResult> results;
+			results.push_back(
+					BHDijkstra::runStandard(*adjArray, source, target));
+			results.push_back(
+					BHDijkstra::runBidirectional(*adjArray, source, target));
+//			results.push_back(
+//					BHDijkstra::runGoalDirected(*adjArray, source, target));
 
+			results.push_back(
+					DialDijkstra::runStandard(*adjArray, source, target));
+			results.push_back(
+					DialDijkstra::runBidirectional(*adjArray, source, target));
+//			results.push_back(
+//					DialDijkstra::runGoalDirected(*adjArray, source, target));
+			std::cout << CalculationResult::format(results) << std::endl;
 		}
 	} else {
 		std::cerr

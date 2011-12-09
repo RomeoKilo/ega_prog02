@@ -37,7 +37,19 @@ public:
 	unsigned int getEdgeCount() const;
 	unsigned int getMaxEdgeLength() const;
 	bool hasBackwardMapping() const;
+
+	/**
+	 * Produces an iterator over the outgoing edges of a node.
+	 *
+	 * Note that for a given node s all produced edges e will fulfill e.getSource() == s
+	 */
 	OutgoingEdgeIterator outgoingOf(const unsigned int node) const;
+
+	/**
+	 * Produces an iterator over the incoming edges of a node.
+	 *
+	 * Note that for a given node s all produced edges e will fulfill e.getTarget() == s
+	 */
 	IncomingEdgeIterator incomingOf(const unsigned int node) const;
 
 	double distanceBound(const unsigned int first, const unsigned int second) const;

@@ -9,6 +9,10 @@
 #include <limits>
 #include <iterator>
 #include <iostream>
+#include <tr1/memory>
+
+using std::tr1::shared_ptr;
+using std::list;
 
 const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 		const unsigned int source, const unsigned int target) {
@@ -57,9 +61,6 @@ const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 		--elementsInBQ;
 		++pqOps;
 
-//		std::cout << "\nDM: " << currentNode << " w= " << distances[currentNode]
-//				<< std::endl;
-
 		if (target == currentNode) {
 			break;
 		} else {
@@ -83,8 +84,6 @@ const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 					bqIndexForNode[other] = targetBucket;
 					distances[other] = relaxedDistance;
 					++elementsInBQ;
-//					std::cout << "INS: " << other << " -> " << targetBucket
-//							<< "(" << edge << ")" << std::endl;
 				} else if (distances[other] > relaxedDistance) {
 
 					// Erase from old bucket
@@ -94,9 +93,6 @@ const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 							bucketQueue[bqIndexForNode[other]];
 					oldBucket.erase(oldIter);
 
-//					std::cout << "DK: " << other << " F: "
-//							<< bqIndexForNode[other] << " T:" << targetBucket
-//							<< std::endl;
 					// Insert into new bucket
 					std::list<unsigned int>::iterator iter = bucket.insert(
 							bucket.end(), other);
@@ -104,7 +100,6 @@ const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 					bqIndexForNode[other] = targetBucket;
 
 					distances[other] = relaxedDistance;
-//					print(bucketQueue, bucketCount, currentPositionInBQ);
 				}
 			} // iteration over neighbors of current node
 		}
@@ -126,8 +121,6 @@ void DialDijkstra::print(std::list<unsigned int> *bucketQueue, unsigned int len,
 		std::list<unsigned int> &currentBucket = bucketQueue[i];
 		if (!bucketQueue[i].empty()) {
 			std::cout << "\t" << i << ":";
-//			std::ostream_iterator<unsigned int> out_it(std::cout, ", ");
-//			std::copy(bucketQueue[i].begin(), bucketQueue[i].end(), out_it);
 			for (std::list<unsigned int>::iterator iter = currentBucket.begin();
 					iter != currentBucket.end(); ++iter) {
 				std::cout << *iter << ", ";
@@ -141,11 +134,228 @@ const CalculationResult DialDijkstra::runBidirectional(
 		const AdjacencyArray &graph, const unsigned int source,
 		const unsigned int target) {
 
+	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
+
+	const unsigned int nodeCount = graph.getNodeCount();
+	const unsigned int maxEdgeLength = graph.getMaxEdgeLength();
+	const unsigned int bucketCount = maxEdgeLength + 1;
 	unsigned int pqOps = 0;
+	ASSERT(source < nodeCount, "Invalid node id for source!");
+	ASSERT(target < nodeCount, "Invalid node id for target!");
+
 	Timer runtimeTimer;
 	runtimeTimer.start();
+
+	// Coordination between queues
+	unsigned int minimalTotalDistance = maxValue;
+	int meetingPoint = -1;
+
+	// FORWARD
+	unsigned int fwDistances[nodeCount];
+	unsigned int fwPoppedFromQueue[nodeCount];
+//	std::list<unsigned int>::iterator fwBqItemForNode[nodeCount];
+	std::list<unsigned int>::iterator *fwBqItemForNode =
+					new std::list<unsigned int>::iterator[nodeCount];
+	int fwBqIndexForNode[nodeCount];
+//	std::list<unsigned int> fwBucketQueue[bucketCount];
+	std::list<unsigned int> *fwBucketQueue = new std::list<unsigned int>[bucketCount];
+	unsigned int fwElementsInBQ = 0;
+	unsigned int fwCurrentPositionInBQ = 0;
+
+	// BACKWARD
+	unsigned int bwDistances[nodeCount];
+	unsigned int bwPoppedFromQueue[nodeCount];
+	std::list<unsigned int>::iterator *bwBqItemForNode =
+					new std::list<unsigned int>::iterator[nodeCount];
+	int bwBqIndexForNode[nodeCount];
+//	std::list<unsigned int> bwBucketQueue[bucketCount];
+	std::list<unsigned int> *bwBucketQueue =
+								new std::list<unsigned int>[bucketCount];
+	unsigned int bwElementsInBQ = 0;
+	unsigned int bwCurrentPositionInBQ = 0;
+
+	for (unsigned int i = 0; i < nodeCount; ++i) {
+		fwDistances[i] = maxValue;
+		fwBqIndexForNode[i] = -1;
+		fwPoppedFromQueue[i] = false;
+
+		bwDistances[i] = maxValue;
+		bwBqIndexForNode[i] = -1;
+		bwPoppedFromQueue[i] = false;
+	}
+
+	// Initialize forward BQ
+	fwBucketQueue[fwCurrentPositionInBQ].push_back(source);
+	fwBqItemForNode[source] = --fwBucketQueue[fwCurrentPositionInBQ].end();
+	++fwElementsInBQ;
+	fwDistances[source] = 0;
+
+	// Initialize backward BQ
+	bwBucketQueue[bwCurrentPositionInBQ].push_back(target);
+	bwBqItemForNode[target] = --bwBucketQueue[bwCurrentPositionInBQ].end();
+	++bwElementsInBQ;
+	bwDistances[target] = 0;
+
+	while (fwElementsInBQ != 0 || bwElementsInBQ != 0) {
+
+		// Retrieve a non-empty bucket in both queues
+		while (fwBucketQueue[fwCurrentPositionInBQ].empty()) {
+			fwCurrentPositionInBQ = (fwCurrentPositionInBQ + 1) % bucketCount;
+		}
+		while (bwBucketQueue[bwCurrentPositionInBQ].empty()) {
+			bwCurrentPositionInBQ = (bwCurrentPositionInBQ + 1) % bucketCount;
+		}
+
+		std::list<unsigned int> &fwCurrentBucket =
+				fwBucketQueue[fwCurrentPositionInBQ];
+		std::list<unsigned int> &bwCurrentBucket =
+				bwBucketQueue[bwCurrentPositionInBQ];
+
+		const unsigned int fwCurrentNode = fwCurrentBucket.front();
+		const unsigned int bwCurrentNode = bwCurrentBucket.front();
+
+		// FORWARD queue selected
+		if (fwDistances[fwCurrentNode] <= bwDistances[bwCurrentNode]) {
+
+			// Pop node from queue
+			fwCurrentBucket.pop_front();
+			--fwElementsInBQ;
+			++pqOps;
+			fwPoppedFromQueue[fwCurrentNode] = true;
+
+			// Search spaces have met
+			if (bwPoppedFromQueue[fwCurrentNode]) {
+				break;
+			}
+
+			// Relax neighbors
+			OutgoingEdgeIterator iterator = graph.outgoingOf(fwCurrentNode);
+			while (iterator.hasNext()) {
+				const Edge &edge = iterator.next();
+				const unsigned int other = edge.getTarget();
+
+				const double relaxedDistance = fwDistances[fwCurrentNode]
+						+ edge.getWeight();
+
+				const unsigned int targetBucket = (fwCurrentPositionInBQ
+						+ edge.getWeight()) % bucketCount;
+				std::list<unsigned int> &bucket = fwBucketQueue[targetBucket];
+
+				const unsigned int pathCost = fwDistances[fwCurrentNode]
+						+ edge.getWeight() + bwDistances[other];
+
+				// Update global minimal distance
+				if (bwDistances[other] != maxValue
+						&& pathCost < minimalTotalDistance) {
+					minimalTotalDistance = pathCost;
+					meetingPoint = other;
+				}
+
+				if (maxValue == fwDistances[other]) {
+
+					bucket.push_back(other);
+
+					fwBqItemForNode[other] = --bucket.end();
+					fwBqIndexForNode[other] = targetBucket;
+					fwDistances[other] = relaxedDistance;
+					++fwElementsInBQ;
+				} else if (fwDistances[other] > relaxedDistance) {
+
+					// Erase from old bucket
+					std::list<unsigned int>::iterator oldIter =
+							fwBqItemForNode[other];
+					std::list<unsigned int> &oldBucket =
+							fwBucketQueue[fwBqIndexForNode[other]];
+					oldBucket.erase(oldIter);
+
+					// Insert into new bucket
+					std::list<unsigned int>::iterator iter = bucket.insert(
+							bucket.end(), other);
+					fwBqItemForNode[other] = iter;
+					fwBqIndexForNode[other] = targetBucket;
+
+					fwDistances[other] = relaxedDistance;
+				}
+			} // iteration over neighbors of current node
+		}
+		// BACKWARD queue selected
+		else {
+			// Pop node from backward queue
+			bwCurrentBucket.pop_front();
+			--bwElementsInBQ;
+			++pqOps;
+			bwPoppedFromQueue[bwCurrentNode] = true;
+
+			// Search spaces have met
+			if (fwPoppedFromQueue[bwCurrentNode]) {
+				break;
+			}
+
+			// Relax neighbors
+			IncomingEdgeIterator iterator = graph.incomingOf(bwCurrentNode);
+			while (iterator.hasNext()) {
+				const Edge &edge = iterator.next();
+				const unsigned int other = edge.getSource();
+
+				const double relaxedDistance = bwDistances[bwCurrentNode]
+						+ edge.getWeight();
+
+				const unsigned int targetBucket = (bwCurrentPositionInBQ
+						+ edge.getWeight()) % bucketCount;
+				std::list<unsigned int> &bucket = bwBucketQueue[targetBucket];
+				unsigned int pathCost = bwDistances[bwCurrentNode]
+						+ edge.getWeight() + fwDistances[other];
+
+				// Update global minimal distance
+				if (fwDistances[other] != maxValue
+						&& pathCost < minimalTotalDistance) {
+					minimalTotalDistance = pathCost;
+					meetingPoint = other;
+				}
+
+				if (maxValue == bwDistances[other]) {
+
+					bucket.push_back(other);
+
+					bwBqItemForNode[other] = --bucket.end();
+					bwBqIndexForNode[other] = targetBucket;
+					bwDistances[other] = relaxedDistance;
+					++bwElementsInBQ;
+				} else if (bwDistances[other] > relaxedDistance) {
+
+					// Erase from old bucket
+					std::list<unsigned int>::iterator oldIter =
+							bwBqItemForNode[other];
+					std::list<unsigned int> &oldBucket =
+							bwBucketQueue[bwBqIndexForNode[other]];
+					oldBucket.erase(oldIter);
+
+					// Insert into new bucket
+					std::list<unsigned int>::iterator iter = bucket.insert(
+							bucket.end(), other);
+					bwBqItemForNode[other] = iter;
+					bwBqIndexForNode[other] = targetBucket;
+
+					bwDistances[other] = relaxedDistance;
+				}
+			} // iteration over neighbors of current node
+		}
+	}
+
+
+	const double distance =
+			fwDistances[meetingPoint] != maxValue
+					&& fwDistances[meetingPoint] != maxValue ?
+					fwDistances[meetingPoint] + bwDistances[meetingPoint] :
+					maxValue;
+
+	delete[] fwBucketQueue;
+	delete[] fwBqItemForNode;
+	delete[] bwBucketQueue;
+	delete[] bwBqItemForNode;
 	runtimeTimer.stop();
-	double distance = -1;
+
+
 	const double calculationTime = runtimeTimer.elapsed();
 
 	const CalculationResult result(distance, calculationTime, pqOps,
@@ -153,8 +363,8 @@ const CalculationResult DialDijkstra::runBidirectional(
 	return result;
 }
 const CalculationResult DialDijkstra::runGoalDirected(
-		const AdjacencyArray &graph, const unsigned int source,
-		const unsigned int target) {
+		const AdjacencyArray &, const unsigned int ,
+		const unsigned int ) {
 
 	unsigned int pqOps = 0;
 	Timer runtimeTimer;

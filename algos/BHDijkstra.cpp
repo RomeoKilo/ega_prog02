@@ -133,7 +133,8 @@ const CalculationResult BHDijkstra::runBidirectional(
 			forwardPoppedFromQueue[currentNode] = true;
 			++pqOps;
 
-			ASSERT(top.getKey() == forwardDistances[currentNode], "Node distances inconsistent!")
+			ASSERT(top.getKey() == forwardDistances[currentNode],
+					"Node distances inconsistent!")
 
 			// current node has been settled by both queues
 			if (backwardPoppedFromQueue[currentNode]) {
@@ -147,13 +148,12 @@ const CalculationResult BHDijkstra::runBidirectional(
 
 				const double relaxedDistance = forwardDistances[currentNode]
 						+ edge.getWeight();
+				const unsigned int pathCost = forwardDistances[currentNode]
+						+ edge.getWeight() + backwardDistances[other];
 
 				if (backwardDistances[other] != maxValue
-						&& forwardDistances[currentNode] + edge.getWeight()
-								+ backwardDistances[other]
-								< minimalTotalDistance) {
-					minimalTotalDistance = forwardDistances[currentNode]
-							+ edge.getWeight() + backwardDistances[other];
+						&& pathCost < minimalTotalDistance) {
+					minimalTotalDistance = pathCost;
 					meetingPoint = other;
 				}
 
@@ -185,7 +185,8 @@ const CalculationResult BHDijkstra::runBidirectional(
 			++pqOps;
 			backwardPoppedFromQueue[currentNode] = true;
 
-			ASSERT(top.getKey() == backwardDistances[currentNode], "Node distances inconsistent!")
+			ASSERT(top.getKey() == backwardDistances[currentNode],
+					"Node distances inconsistent!")
 			// current node has been settled by both queues
 			if (forwardPoppedFromQueue[currentNode]) {
 				break;
@@ -198,13 +199,12 @@ const CalculationResult BHDijkstra::runBidirectional(
 
 				const double relaxedDistance = backwardDistances[currentNode]
 						+ edge.getWeight();
+				const unsigned int pathCost = backwardDistances[currentNode]
+						+ edge.getWeight() + forwardDistances[other];
 
 				if (forwardDistances[other] != maxValue
-						&& backwardDistances[currentNode] + edge.getWeight()
-								+ forwardDistances[other]
-								< minimalTotalDistance) {
-					minimalTotalDistance = backwardDistances[currentNode]
-							+ edge.getWeight() + forwardDistances[other];
+						&& pathCost < minimalTotalDistance) {
+					minimalTotalDistance = pathCost;
 					meetingPoint = other;
 				}
 
@@ -234,7 +234,6 @@ const CalculationResult BHDijkstra::runBidirectional(
 	}
 
 	runtimeTimer.stop();
-	ASSERT(meetingPoint > 0, "No path found!")
 	const double distance = forwardDistances[meetingPoint]
 			+ backwardDistances[meetingPoint];
 	const double calculationTime = runtimeTimer.elapsed();

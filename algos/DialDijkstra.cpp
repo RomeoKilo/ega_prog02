@@ -396,6 +396,7 @@ const CalculationResult DialDijkstra::runGoalDirected(
 	for (unsigned int i = 0; i < nodeCount; ++i) {
 		distances[i] = maxValue;
 		bqIndexForNode[i] = -1;
+		bqItemForNode[i] = std::list<unsigned int>::iterator();
 	}
 
 	unsigned int currentPositionInBQ = 0; // the index which holds the nodes to be selected next
@@ -414,9 +415,11 @@ const CalculationResult DialDijkstra::runGoalDirected(
 		// Pop the next element from the queue
 		const unsigned int currentNode = currentBucket.front();
 		currentBucket.pop_front();
+		bqItemForNode[currentNode] = std::list<unsigned int>::iterator();
+		bqIndexForNode[currentNode] = -1;
 
-		std::cout << "DM: " << currentNode << " w=" << distances[currentNode]
-				<< " b=" << currentPositionInBQ << std::endl;
+//		std::cout << "DM: " << currentNode << " w=" << distances[currentNode]
+//				<< " b=" << currentPositionInBQ << std::endl;
 
 		--elementsInBQ;
 		++pqOps;
@@ -433,44 +436,50 @@ const CalculationResult DialDijkstra::runGoalDirected(
 						+ edge.getWeight();
 				const unsigned int targetBucketOffset =
 						static_cast<unsigned int>(edge.getWeight()
-								+ distanceToTarget[other]);
+								+ distanceToTarget[other] - distanceToTarget[currentNode]);
 
 				const unsigned int targetBucket = (currentPositionInBQ
 						+ targetBucketOffset) % bucketCount;
 				std::list<unsigned int> &bucket = bucketQueue[targetBucket];
 
-				if (maxValue == distances[other]) {
+				if (distances[other] > relaxedDistance) {
+					if (-1 == bqIndexForNode[other]) {
 
-					bucket.push_back(other);
+						bucket.push_back(other);
 
-					bqItemForNode[other] = --bucket.end();
-					bqIndexForNode[other] = targetBucket;
-					distances[other] = relaxedDistance;
-					++elementsInBQ;
+						bqItemForNode[other] = --bucket.end();
+						bqIndexForNode[other] = targetBucket;
+						distances[other] = relaxedDistance;
+						++elementsInBQ;
 
-					std::cout << "\tINS: " << other << " w=" << relaxedDistance
-							<< " b=" << targetBucket << std::endl;
-				} else if (distances[other] > relaxedDistance) {
+//						std::cout << "\tINS: " << other << " w="
+//								<< relaxedDistance << " b=" << targetBucket
+//								<< " delta_b=" << targetBucketOffset
+//								<< std::endl;
+					} else {
 
-					// Erase from old bucket
-					std::list<unsigned int>::iterator oldIter =
-							bqItemForNode[other];
-					std::list<unsigned int> &oldBucket =
-							bucketQueue[bqIndexForNode[other]];
-					oldBucket.erase(oldIter);
+						// Erase from old bucket
+						std::list<unsigned int>::iterator oldIter =
+								bqItemForNode[other];
+						std::list<unsigned int> &oldBucket =
+								bucketQueue[bqIndexForNode[other]];
+						oldBucket.erase(oldIter);
 
-					std::cout << "\tDK: " << other << " w=" << relaxedDistance
-							<< " b:" << bqIndexForNode[other] << "->"
-							<< targetBucket << std::endl;
+//						std::cout << "\tDK: " << other << " w="
+//								<< relaxedDistance << " b:"
+//								<< bqIndexForNode[other] << "->" << targetBucket
+//								<< " delta_b=" << targetBucketOffset
+//								<< std::endl;
 
-					// Insert into new bucket
-					std::list<unsigned int>::iterator iter = bucket.insert(
-							bucket.end(), other);
-					bqItemForNode[other] = iter;
-					bqIndexForNode[other] = targetBucket;
+						// Insert into new bucket
+						std::list<unsigned int>::iterator iter = bucket.insert(
+								bucket.end(), other);
+						bqItemForNode[other] = iter;
+						bqIndexForNode[other] = targetBucket;
 
-					distances[other] = relaxedDistance;
-				}
+						distances[other] = relaxedDistance;
+					}
+				} // relaxation condition met
 			} // iteration over neighbors of current node
 		}
 

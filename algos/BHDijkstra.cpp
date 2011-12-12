@@ -256,11 +256,11 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 
 	unsigned int distances[nodeCount];
 	double skewedDistances[nodeCount];
-	unsigned int heapItemForNode[nodeCount];
+	int heapItemForNode[nodeCount];
 	for (unsigned int i = 0; i < nodeCount; ++i) {
 		distances[i] = maxValue;
 		skewedDistances[i] = maxValue;
-		heapItemForNode[i] = maxValue;
+		heapItemForNode[i] = -1;
 	}
 
 	distances[source] = 0;
@@ -272,7 +272,10 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 		++pqOps;
 
 		const unsigned int currentNode = top.getItem();
-		heapItemForNode[currentNode] = maxValue;
+		heapItemForNode[currentNode] = -1;
+
+//		std::cout << "DM: " << currentNode << " w=" << distances[currentNode]
+//				<< " b=" << top.getKey() << std::endl;
 
 		// Early Termination
 		if (target == currentNode) {
@@ -285,26 +288,30 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 
 				const double relaxedDistance = distances[currentNode]
 						+ edge.getWeight();
-				const double goalDistance = relaxedDistance + graph.distanceBound(other, target);
-				// target node not processed, yet
-				if (maxValue == distances[other]) {
+				const double goalDistance = relaxedDistance
+						+ graph.distanceBound(other, target);
+				if (distances[other] > relaxedDistance) {
+					if (-1 == heapItemForNode[other]) {
 
-					ASSERT(heapItemForNode[other] == maxValue,
-							"Item should not be included in PQ!");
+						const unsigned int newItem = pq.insert(other,
+								goalDistance);
+						distances[other] = relaxedDistance;
+						heapItemForNode[other] = newItem;
 
-					const unsigned int newItem = pq.insert(other, goalDistance);
-					distances[other] = relaxedDistance;
-					heapItemForNode[other] = newItem;
+//						std::cout << "\tINS: " << other << " w="
+//								<< relaxedDistance << " 'b="
+//								<< (goalDistance - distances[currentNode])
+//								<< std::endl;
+					} else {
+						const unsigned int othersHeapItem =
+								heapItemForNode[other];
+						distances[other] = relaxedDistance;
+						pq.decreaseKey(othersHeapItem, goalDistance);
 
-				} else if (distances[other] > relaxedDistance) {
-
-					ASSERT(heapItemForNode[other] != maxValue,
-							"Item should be included in PQ!");
-
-					const unsigned int othersHeapItem = heapItemForNode[other];
-					distances[other] = relaxedDistance;
-					pq.decreaseKey(othersHeapItem, goalDistance);
-				}
+//						std::cout << "\tDK: " << other << " w="
+//								<< relaxedDistance << std::endl;
+					}
+				} // relaxation condition met
 			} // iteration over neighbors of current node
 		}
 	}

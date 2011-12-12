@@ -100,51 +100,70 @@ int main(int argc, char *argv[]) {
 	if (0 == errorcode) {
 		const shared_ptr<const AdjacencyArray> adjArray =
 				AdjacencyArray::fromFile(filename, true);
-		if (useBinaryHeap) {
-			if (useBidirectional) {
-				const CalculationResult result = BHDijkstra::runBidirectional(
-						*adjArray, source, target);
-				std::cout << result.toString() << std::endl;
-			} else if (useGoalDirected) {
-				const CalculationResult result = BHDijkstra::runGoalDirected(
-						*adjArray, source, target);
-				std::cout << result.toString() << std::endl;
-			} else {
-				const CalculationResult result = BHDijkstra::runStandard(
-						*adjArray, source, target);
-				std::cout << result.toString() << std::endl;
-			}
-		} else if (useDialsImplementation) {
-			if (useBidirectional) {
-				const CalculationResult result = DialDijkstra::runBidirectional(
-						*adjArray, source, target);
-				std::cout << result.toString() << std::endl;
-			} else if (useGoalDirected) {
-				const CalculationResult result = DialDijkstra::runGoalDirected(
-						*adjArray, source, target);
-				std::cout << result.toString() << std::endl;
-			} else {
-				const CalculationResult result = DialDijkstra::runStandard(
-						*adjArray, source, target);
-				std::cout << result.toString() << std::endl;
-			}
-		} else //comparison
-		{
-			std::vector<CalculationResult> results;
-			results.push_back(
-					BHDijkstra::runStandard(*adjArray, source, target));
-			results.push_back(
-					BHDijkstra::runBidirectional(*adjArray, source, target));
-			results.push_back(
-					BHDijkstra::runGoalDirected(*adjArray, source, target));
+		const int nodeCount = adjArray->getNodeCount();
+		const int edgeCount = adjArray->getEdgeCount();
+		if (source >= nodeCount || target >= nodeCount) {
+			std::cerr << "Node IDs (s=" << source << ",t=" << target
+					<< ") outside node count (n=" << nodeCount << ")"
+					<< std::endl;
+			errorcode = -5;
+		} else {
+			std::cout << "File: " << filename << " with n=" << nodeCount
+					<< " m=" << edgeCount  << std::endl;
+			std::cout << "Query: s=" << source << ", t=" << target << std::endl;
+			if (useBinaryHeap) {
+				if (useBidirectional) {
+					const CalculationResult result =
+							BHDijkstra::runBidirectional(*adjArray, source,
+									target);
+					std::cout << result.toString() << std::endl;
+				} else if (useGoalDirected) {
+					const CalculationResult result =
+							BHDijkstra::runGoalDirected(*adjArray, source,
+									target);
+					std::cout << result.toString() << std::endl;
+				} else {
+					const CalculationResult result = BHDijkstra::runStandard(
+							*adjArray, source, target);
+					std::cout << result.toString() << std::endl;
+				}
+			} else if (useDialsImplementation) {
+				if (useBidirectional) {
+					const CalculationResult result =
+							DialDijkstra::runBidirectional(*adjArray, source,
+									target);
+					std::cout << result.toString() << std::endl;
+				} else if (useGoalDirected) {
+					const CalculationResult result =
+							DialDijkstra::runGoalDirected(*adjArray, source,
+									target);
+					std::cout << result.toString() << std::endl;
+				} else {
+					const CalculationResult result = DialDijkstra::runStandard(
+							*adjArray, source, target);
+					std::cout << result.toString() << std::endl;
+				}
+			} else //comparison
+			{
+				std::vector<CalculationResult> results;
+				results.push_back(
+						BHDijkstra::runStandard(*adjArray, source, target));
+				results.push_back(
+						BHDijkstra::runBidirectional(*adjArray, source,
+								target));
+				results.push_back(
+						BHDijkstra::runGoalDirected(*adjArray, source, target));
 
-			results.push_back(
-					DialDijkstra::runStandard(*adjArray, source, target));
-			results.push_back(
-					DialDijkstra::runBidirectional(*adjArray, source, target));
-			results.push_back(
-					DialDijkstra::runGoalDirected(*adjArray, source, target));
-			std::cout << CalculationResult::format(results) << std::endl;
+				results.push_back(
+						DialDijkstra::runStandard(*adjArray, source, target));
+				results.push_back(
+						DialDijkstra::runBidirectional(*adjArray, source,
+								target));
+				results.push_back(
+						DialDijkstra::runGoalDirected(*adjArray, source,
+								target));
+				std::cout << CalculationResult::format(results) << std::endl;
+			}
 		}
 	} else {
 		std::cerr

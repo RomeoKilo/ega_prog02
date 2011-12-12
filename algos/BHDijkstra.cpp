@@ -10,19 +10,18 @@
 
 const CalculationResult BHDijkstra::runStandard(const AdjacencyArray &graph,
 		const unsigned int source, const unsigned int target) {
-	const unsigned int nodeCount = graph.getNodeCount();
-	ASSERT(source < nodeCount, "Invalid node id for source!");
-	ASSERT(target < nodeCount, "Invalid node id for target!");
-	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
+
 	Timer runtimeTimer;
 	runtimeTimer.start();
 
+	const unsigned int nodeCount = graph.getNodeCount();
+	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
 	unsigned int pqOps = 0;
 
-	BinaryHeap pq;
+	BinaryHeap &pq = *(new BinaryHeap);
 
-	unsigned int distances[nodeCount];
-	unsigned int heapItemForNode[nodeCount];
+	unsigned int *distances = new unsigned int[nodeCount];
+	unsigned int *heapItemForNode = new unsigned int[nodeCount];
 	for (unsigned int i = 0; i < nodeCount; ++i) {
 		distances[i] = maxValue;
 		heapItemForNode[i] = maxValue;
@@ -76,8 +75,13 @@ const CalculationResult BHDijkstra::runStandard(const AdjacencyArray &graph,
 		}
 	}
 
+	const double distance = distances[target];
+
+	delete &pq;
+	delete[] distances;
+	delete[] heapItemForNode;
+
 	runtimeTimer.stop();
-	double distance = distances[target];
 	const double calculationTime = runtimeTimer.elapsed();
 
 	const CalculationResult result(distance, calculationTime, pqOps, "heap");
@@ -86,57 +90,57 @@ const CalculationResult BHDijkstra::runStandard(const AdjacencyArray &graph,
 const CalculationResult BHDijkstra::runBidirectional(
 		const AdjacencyArray &graph, const unsigned int source,
 		const unsigned int target) {
+	Timer runtimeTimer;
+	runtimeTimer.start();
+
 	const unsigned int nodeCount = graph.getNodeCount();
-	ASSERT(source < nodeCount, "Invalid node id for source!");
-	ASSERT(target < nodeCount, "Invalid node id for target!");
 	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
 	unsigned int pqOps = 0;
 
-	Timer runtimeTimer;
-	runtimeTimer.start();
 	unsigned int minimalTotalDistance = maxValue;
 	int meetingPoint = -1;
 
-	BinaryHeap forwardPQ;
-	BinaryHeap backwardPQ;
+	BinaryHeap &fwPQ = *(new BinaryHeap());
+	BinaryHeap &bwPQ = *(new BinaryHeap());
 
-	unsigned int forwardDistances[nodeCount];
-	bool forwardPoppedFromQueue[nodeCount];
-	unsigned int backwardDistances[nodeCount];
-	bool backwardPoppedFromQueue[nodeCount];
+	unsigned int *fwDistances = new unsigned int[nodeCount];
+	bool *fwPoppedFromQueue = new bool[nodeCount];
+	unsigned int *fwHeapItemForNode = new unsigned int[nodeCount];
+
+	unsigned int *bwDistances = new unsigned int[nodeCount];
+	bool *bwPoppedFromQueue = new bool[nodeCount];
+	unsigned int *bwHeapItemForNode = new unsigned int[nodeCount];
+
 	for (unsigned int i = 0; i < nodeCount; ++i) {
-		forwardDistances[i] = maxValue;
-		forwardPoppedFromQueue[i] = false;
-		backwardDistances[i] = maxValue;
-		backwardPoppedFromQueue[i] = false;
-	}
-	unsigned int forwardHeapItemForNode[nodeCount];
-	unsigned int backwardHeapItemForNode[nodeCount];
-	for (unsigned int i = 0; i < nodeCount; ++i) {
-		forwardHeapItemForNode[i] = maxValue;
-		backwardHeapItemForNode[i] = maxValue;
+		fwDistances[i] = maxValue;
+		fwPoppedFromQueue[i] = false;
+		fwHeapItemForNode[i] = maxValue;
+
+		bwDistances[i] = maxValue;
+		bwPoppedFromQueue[i] = false;
+		bwHeapItemForNode[i] = maxValue;
 	}
 
-	forwardHeapItemForNode[source] = forwardPQ.insert(source, 0);
-	forwardDistances[source] = 0;
+	fwHeapItemForNode[source] = fwPQ.insert(source, 0);
+	fwDistances[source] = 0;
 
-	backwardHeapItemForNode[source] = backwardPQ.insert(target, 0);
-	backwardDistances[target] = 0;
+	bwHeapItemForNode[source] = bwPQ.insert(target, 0);
+	bwDistances[target] = 0;
 
-	while (!forwardPQ.isEmpty() && !backwardPQ.isEmpty()) {
+	while (!fwPQ.isEmpty() && !bwPQ.isEmpty()) {
 		// Select the queue with the smaller min-key to do the next step
-		if (forwardPQ.min().getKey() <= backwardPQ.min().getKey()) {
-			const HeapItem &top = forwardPQ.min();
-			forwardPQ.deleteMin();
+		if (fwPQ.min().getKey() <= bwPQ.min().getKey()) {
+			const HeapItem &top = fwPQ.min();
+			fwPQ.deleteMin();
 			const unsigned int currentNode = top.getItem();
-			forwardPoppedFromQueue[currentNode] = true;
+			fwPoppedFromQueue[currentNode] = true;
 			++pqOps;
 
-			ASSERT(top.getKey() == forwardDistances[currentNode],
+			ASSERT(top.getKey() == fwDistances[currentNode],
 					"Node distances inconsistent!")
 
 			// current node has been settled by both queues
-			if (backwardPoppedFromQueue[currentNode]) {
+			if (bwPoppedFromQueue[currentNode]) {
 				break;
 			}
 
@@ -145,48 +149,48 @@ const CalculationResult BHDijkstra::runBidirectional(
 				const Edge &edge = iterator.next();
 				const unsigned int other = edge.getTarget();
 
-				const double relaxedDistance = forwardDistances[currentNode]
+				const double relaxedDistance = fwDistances[currentNode]
 						+ edge.getWeight();
-				const unsigned int pathCost = forwardDistances[currentNode]
-						+ edge.getWeight() + backwardDistances[other];
+				const unsigned int pathCost = fwDistances[currentNode]
+						+ edge.getWeight() + bwDistances[other];
 
-				if (backwardDistances[other] != maxValue
+				if (bwDistances[other] != maxValue
 						&& pathCost < minimalTotalDistance) {
 					minimalTotalDistance = pathCost;
 					meetingPoint = other;
 				}
 
-				if (maxValue == forwardDistances[other]) {
+				if (maxValue == fwDistances[other]) {
 
-					ASSERT(forwardHeapItemForNode[other] == maxValue,
+					ASSERT(fwHeapItemForNode[other] == maxValue,
 							"Item should not be included in forward PQ!");
 
-					const unsigned int newItem = forwardPQ.insert(other,
+					const unsigned int newItem = fwPQ.insert(other,
 							relaxedDistance);
-					forwardDistances[other] = relaxedDistance;
-					forwardHeapItemForNode[other] = newItem;
-				} else if (forwardDistances[other] > relaxedDistance) {
+					fwDistances[other] = relaxedDistance;
+					fwHeapItemForNode[other] = newItem;
+				} else if (fwDistances[other] > relaxedDistance) {
 
-					ASSERT(forwardHeapItemForNode[other] != maxValue,
+					ASSERT(fwHeapItemForNode[other] != maxValue,
 							"Item should be included in forward PQ!");
 
 					const unsigned int othersHeapItem =
-							forwardHeapItemForNode[other];
-					forwardDistances[other] = relaxedDistance;
-					forwardPQ.decreaseKey(othersHeapItem, relaxedDistance);
+							fwHeapItemForNode[other];
+					fwDistances[other] = relaxedDistance;
+					fwPQ.decreaseKey(othersHeapItem, relaxedDistance);
 				}
 			} // iteration over outgoing edges of current node
 		} else { // Do one step with the backward search
-			const HeapItem &top = backwardPQ.min();
-			backwardPQ.deleteMin();
+			const HeapItem &top = bwPQ.min();
+			bwPQ.deleteMin();
 			const unsigned int currentNode = top.getItem();
 			++pqOps;
-			backwardPoppedFromQueue[currentNode] = true;
+			bwPoppedFromQueue[currentNode] = true;
 
-			ASSERT(top.getKey() == backwardDistances[currentNode],
+			ASSERT(top.getKey() == bwDistances[currentNode],
 					"Node distances inconsistent!")
 			// current node has been settled by both queues
-			if (forwardPoppedFromQueue[currentNode]) {
+			if (fwPoppedFromQueue[currentNode]) {
 				break;
 			}
 
@@ -195,45 +199,57 @@ const CalculationResult BHDijkstra::runBidirectional(
 				const Edge &edge = iterator.next();
 				const unsigned int other = edge.getSource();
 
-				const double relaxedDistance = backwardDistances[currentNode]
+				const double relaxedDistance = bwDistances[currentNode]
 						+ edge.getWeight();
-				const unsigned int pathCost = backwardDistances[currentNode]
-						+ edge.getWeight() + forwardDistances[other];
+				const unsigned int pathCost = bwDistances[currentNode]
+						+ edge.getWeight() + fwDistances[other];
 
-				if (forwardDistances[other] != maxValue
+				if (fwDistances[other] != maxValue
 						&& pathCost < minimalTotalDistance) {
 					minimalTotalDistance = pathCost;
 					meetingPoint = other;
 				}
 
-				if (maxValue == backwardDistances[other]) {
+				if (maxValue == bwDistances[other]) {
 
-					ASSERT(backwardHeapItemForNode[other] == maxValue,
+					ASSERT(bwHeapItemForNode[other] == maxValue,
 							"Item should not be included in backward PQ!");
 
-					const unsigned int newItem = backwardPQ.insert(other,
+					const unsigned int newItem = bwPQ.insert(other,
 							relaxedDistance);
-					backwardDistances[other] = relaxedDistance;
-					backwardHeapItemForNode[other] = newItem;
+					bwDistances[other] = relaxedDistance;
+					bwHeapItemForNode[other] = newItem;
 
-				} else if (backwardDistances[other] > relaxedDistance) {
+				} else if (bwDistances[other] > relaxedDistance) {
 
-					ASSERT(backwardHeapItemForNode[other] != maxValue,
+					ASSERT(bwHeapItemForNode[other] != maxValue,
 							"Item should be included in backward PQ!");
 
 					const unsigned int othersHeapItem =
-							backwardHeapItemForNode[other];
-					backwardDistances[other] = relaxedDistance;
-					backwardPQ.decreaseKey(othersHeapItem, relaxedDistance);
+							bwHeapItemForNode[other];
+					bwDistances[other] = relaxedDistance;
+					bwPQ.decreaseKey(othersHeapItem, relaxedDistance);
 				}
 			} // iteration over outgoing edges of current node
 		}
 
 	}
 
+	const double distance = fwDistances[meetingPoint]
+			+ bwDistances[meetingPoint];
+
+	delete &fwPQ;
+	delete[] fwDistances;
+	delete[] fwHeapItemForNode;
+	delete[] fwPoppedFromQueue;
+
+	delete &bwPQ;
+	delete[] bwDistances;
+	delete[] bwHeapItemForNode;
+	delete[] bwPoppedFromQueue;
+
+
 	runtimeTimer.stop();
-	const double distance = forwardDistances[meetingPoint]
-			+ backwardDistances[meetingPoint];
 	const double calculationTime = runtimeTimer.elapsed();
 	const CalculationResult result(distance, calculationTime, pqOps,
 			"heap, bidirectional");
@@ -242,30 +258,27 @@ const CalculationResult BHDijkstra::runBidirectional(
 }
 const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 		const unsigned int source, const unsigned int target) {
-
-	const unsigned int nodeCount = graph.getNodeCount();
-	ASSERT(source < nodeCount, "Invalid node id for source!");
-	ASSERT(target < nodeCount, "Invalid node id for target!");
-	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
 	Timer runtimeTimer;
 	runtimeTimer.start();
 
+	const unsigned int nodeCount = graph.getNodeCount();
+	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
 	unsigned int pqOps = 0;
 
-	BinaryHeap pq;
+	BinaryHeap &pq = *(new BinaryHeap());
 
-	unsigned int distances[nodeCount];
-	double skewedDistances[nodeCount];
-	int heapItemForNode[nodeCount];
+	unsigned int *distances = new unsigned int[nodeCount];
+	int *heapItemForNode = new int[nodeCount];
+
 	for (unsigned int i = 0; i < nodeCount; ++i) {
 		distances[i] = maxValue;
-		skewedDistances[i] = maxValue;
 		heapItemForNode[i] = -1;
 	}
 
 	distances[source] = 0;
-	unsigned int srcHeapItem = pq.insert(source, 0U);
+	const unsigned int srcHeapItem = pq.insert(source, 0U);
 	heapItemForNode[source] = srcHeapItem;
+
 	while (!pq.isEmpty()) {
 		const HeapItem &top = pq.min();
 		pq.deleteMin();
@@ -316,10 +329,14 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 		}
 	}
 
-	runtimeTimer.stop();
-	int distance = distances[target];
-	const double calculationTime = runtimeTimer.elapsed();
+	const int distance = distances[target];
 
+	delete &pq;
+	delete[] distances;
+	delete[] heapItemForNode;
+
+	runtimeTimer.stop();
+	const double calculationTime = runtimeTimer.elapsed();
 	const CalculationResult result(distance, calculationTime, pqOps,
 			"heap, A*");
 	return result;

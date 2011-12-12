@@ -16,6 +16,8 @@ using std::list;
 
 const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 		const unsigned int source, const unsigned int target) {
+	Timer runtimeTimer;
+	runtimeTimer.start();
 
 	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
 
@@ -23,16 +25,14 @@ const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 	const unsigned int maxEdgeLength = graph.getMaxEdgeLength();
 	const unsigned int bucketCount = maxEdgeLength + 1;
 	unsigned int pqOps = 0;
-	ASSERT(source < nodeCount, "Invalid node id for source!");
-	ASSERT(target < nodeCount, "Invalid node id for target!");
 
-	Timer runtimeTimer;
-	runtimeTimer.start();
+	unsigned int *distances = new unsigned int[nodeCount];
+	std::list<unsigned int>::iterator *bqItemForNode = new std::list<
+			unsigned int>::iterator[nodeCount];
+	int *bqIndexForNode = new int[nodeCount];
 
-	unsigned int distances[nodeCount];
-	std::list<unsigned int>::iterator bqItemForNode[nodeCount];
-	int bqIndexForNode[nodeCount];
-	std::list<unsigned int> bucketQueue[bucketCount];
+	std::list<unsigned int> *bucketQueue =
+			new std::list<unsigned int>[bucketCount];
 
 	unsigned int elementsInBQ = 0;
 
@@ -106,8 +106,14 @@ const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 
 	}
 
+	const double distance = distances[target];
+
+	delete[] distances;
+	delete[] bqIndexForNode;
+	delete[] bqItemForNode;
+	delete[] bucketQueue;
+
 	runtimeTimer.stop();
-	double distance = distances[target];
 	const double calculationTime = runtimeTimer.elapsed();
 
 	const CalculationResult result(distance, calculationTime, pqOps, "dial");
@@ -133,6 +139,8 @@ void DialDijkstra::print(std::list<unsigned int> *bucketQueue, unsigned int len,
 const CalculationResult DialDijkstra::runBidirectional(
 		const AdjacencyArray &graph, const unsigned int source,
 		const unsigned int target) {
+	Timer runtimeTimer;
+	runtimeTimer.start();
 
 	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
 
@@ -140,38 +148,32 @@ const CalculationResult DialDijkstra::runBidirectional(
 	const unsigned int maxEdgeLength = graph.getMaxEdgeLength();
 	const unsigned int bucketCount = maxEdgeLength + 1;
 	unsigned int pqOps = 0;
-	ASSERT(source < nodeCount, "Invalid node id for source!");
-	ASSERT(target < nodeCount, "Invalid node id for target!");
-
-	Timer runtimeTimer;
-	runtimeTimer.start();
 
 	// Coordination between queues
 	unsigned int minimalTotalDistance = maxValue;
 	int meetingPoint = -1;
 
 	// FORWARD
-	unsigned int fwDistances[nodeCount];
-	unsigned int fwPoppedFromQueue[nodeCount];
-//	std::list<unsigned int>::iterator fwBqItemForNode[nodeCount];
-	std::list<unsigned int>::iterator *fwBqItemForNode = new std::list<
-			unsigned int>::iterator[nodeCount];
-	int fwBqIndexForNode[nodeCount];
-//	std::list<unsigned int> fwBucketQueue[bucketCount];
+	unsigned int *fwDistances = new unsigned int[nodeCount];
+	bool *fwPoppedFromQueue = new bool[nodeCount];
+	std::list<unsigned int>::iterator *fwBqItemForNode = //
+			new std::list<unsigned int>::iterator[nodeCount];
+	int *fwBqIndexForNode = new int[nodeCount];
 	std::list<unsigned int> *fwBucketQueue =
 			new std::list<unsigned int>[bucketCount];
+
 	unsigned int fwElementsInBQ = 0;
 	unsigned int fwCurrentPositionInBQ = 0;
 
 	// BACKWARD
-	unsigned int bwDistances[nodeCount];
-	unsigned int bwPoppedFromQueue[nodeCount];
-	std::list<unsigned int>::iterator *bwBqItemForNode = new std::list<
-			unsigned int>::iterator[nodeCount];
-	int bwBqIndexForNode[nodeCount];
-//	std::list<unsigned int> bwBucketQueue[bucketCount];
+	unsigned int *bwDistances = new unsigned int[nodeCount];
+	bool *bwPoppedFromQueue = new bool[nodeCount];
+	std::list<unsigned int>::iterator *bwBqItemForNode = //
+			new std::list<unsigned int>::iterator[nodeCount];
+	int *bwBqIndexForNode = new int[nodeCount];
 	std::list<unsigned int> *bwBucketQueue =
 			new std::list<unsigned int>[bucketCount];
+
 	unsigned int bwElementsInBQ = 0;
 	unsigned int bwCurrentPositionInBQ = 0;
 
@@ -349,12 +351,19 @@ const CalculationResult DialDijkstra::runBidirectional(
 					fwDistances[meetingPoint] + bwDistances[meetingPoint] :
 					maxValue;
 
+	delete[] fwDistances;
 	delete[] fwBucketQueue;
+	delete[] fwBqIndexForNode;
 	delete[] fwBqItemForNode;
-	delete[] bwBucketQueue;
-	delete[] bwBqItemForNode;
-	runtimeTimer.stop();
+	delete[] fwPoppedFromQueue;
 
+	delete[] bwDistances;
+	delete[] bwBucketQueue;
+	delete[] bwBqIndexForNode;
+	delete[] bwBqItemForNode;
+	delete[] bwPoppedFromQueue;
+
+	runtimeTimer.stop();
 	const double calculationTime = runtimeTimer.elapsed();
 
 	const CalculationResult result(distance, calculationTime, pqOps,
@@ -364,21 +373,18 @@ const CalculationResult DialDijkstra::runBidirectional(
 const CalculationResult DialDijkstra::runGoalDirected(
 		const AdjacencyArray &graph, const unsigned int source,
 		const unsigned int target) {
-
-	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
-
-	const unsigned int nodeCount = graph.getNodeCount();
-	const unsigned int maxEdgeLength = graph.getMaxEdgeLength();
-	unsigned int pqOps = 0;
-	ASSERT(source < nodeCount, "Invalid node id for source!");
-	ASSERT(target < nodeCount, "Invalid node id for target!");
 	Timer runtimeTimer;
 	runtimeTimer.start();
 
-	unsigned int distances[nodeCount];
+	const unsigned int maxValue = std::numeric_limits<unsigned int>::max();
+	const unsigned int nodeCount = graph.getNodeCount();
+	const unsigned int maxEdgeLength = graph.getMaxEdgeLength();
+	unsigned int pqOps = 0;
 
 	unsigned int maxDistanceToTarget = 0;
-	unsigned int distanceToTarget[nodeCount];
+	unsigned int *distances = new unsigned int[nodeCount];
+	unsigned int *distanceToTarget = new unsigned int[nodeCount];
+
 	for (unsigned int i = 0; i < nodeCount; ++i) {
 		distanceToTarget[i] = static_cast<int>(graph.distanceBound(i, target));
 		maxDistanceToTarget = std::max(distanceToTarget[i],
@@ -386,8 +392,9 @@ const CalculationResult DialDijkstra::runGoalDirected(
 	}
 	const unsigned int bucketCount = maxEdgeLength + maxDistanceToTarget + 1;
 
-	std::list<unsigned int>::iterator bqItemForNode[nodeCount];
-	int bqIndexForNode[nodeCount];
+	std::list<unsigned int>::iterator *bqItemForNode = //
+			new std::list<unsigned int>::iterator[nodeCount];
+	int *bqIndexForNode = new int[nodeCount];
 	std::list<unsigned int> *bucketQueue =
 			new std::list<unsigned int>[bucketCount];
 
@@ -436,7 +443,8 @@ const CalculationResult DialDijkstra::runGoalDirected(
 						+ edge.getWeight();
 				const unsigned int targetBucketOffset =
 						static_cast<unsigned int>(edge.getWeight()
-								+ distanceToTarget[other] - distanceToTarget[currentNode]);
+								+ distanceToTarget[other]
+								- distanceToTarget[currentNode]);
 
 				const unsigned int targetBucket = (currentPositionInBQ
 						+ targetBucketOffset) % bucketCount;
@@ -485,10 +493,15 @@ const CalculationResult DialDijkstra::runGoalDirected(
 
 	}
 
+	const double distance = distances[target];
+
+	delete[] distances;
+	delete[] distanceToTarget;
+	delete[] bqIndexForNode;
+	delete[] bqItemForNode;
 	delete[] bucketQueue;
 
 	runtimeTimer.stop();
-	double distance = distances[target];
 	const double calculationTime = runtimeTimer.elapsed();
 
 	const CalculationResult result(distance, calculationTime, pqOps,

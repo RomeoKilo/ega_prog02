@@ -264,7 +264,6 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 	}
 
 	distances[source] = 0;
-	skewedDistances[source] = 0;
 	unsigned int srcHeapItem = pq.insert(source, 0U);
 	heapItemForNode[source] = srcHeapItem;
 	while (!pq.isEmpty()) {
@@ -274,9 +273,6 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 
 		const unsigned int currentNode = top.getItem();
 		heapItemForNode[currentNode] = maxValue;
-		const double currentSkewedDist = top.getKey();
-		ASSERT(currentSkewedDist == skewedDistances[currentNode],
-				"Distances are not consistent anymore!");
 
 		// Early Termination
 		if (target == currentNode) {
@@ -289,9 +285,7 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 
 				const double relaxedDistance = distances[currentNode]
 						+ edge.getWeight();
-				const double goalDistance = relaxedDistance
-						+ graph.distanceBound(other, target)
-						- graph.distanceBound(currentNode, target);
+				const double goalDistance = relaxedDistance + graph.distanceBound(other, target);
 				// target node not processed, yet
 				if (maxValue == distances[other]) {
 
@@ -300,16 +294,15 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 
 					const unsigned int newItem = pq.insert(other, goalDistance);
 					distances[other] = relaxedDistance;
-					skewedDistances[other] = goalDistance;
 					heapItemForNode[other] = newItem;
-				} else if (skewedDistances[other] > goalDistance) {
+
+				} else if (distances[other] > relaxedDistance) {
 
 					ASSERT(heapItemForNode[other] != maxValue,
 							"Item should be included in PQ!");
 
 					const unsigned int othersHeapItem = heapItemForNode[other];
 					distances[other] = relaxedDistance;
-					skewedDistances[other] = goalDistance;
 					pq.decreaseKey(othersHeapItem, goalDistance);
 				}
 			} // iteration over neighbors of current node

@@ -67,7 +67,7 @@ public:
 	}
 
 	bool isEmpty() const {
-		return 0 == _items.size();
+		return 0 == this->size();
 	}
 
 	void print() {

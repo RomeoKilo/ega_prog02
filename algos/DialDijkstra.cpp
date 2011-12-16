@@ -120,22 +120,6 @@ const CalculationResult DialDijkstra::runStandard(const AdjacencyArray &graph,
 	return result;
 }
 
-void DialDijkstra::print(std::list<unsigned int> *bucketQueue, unsigned int len,
-		unsigned int current) {
-	std::cout << "\tCurrent: " << current << std::endl;
-	for (unsigned int i = 0; i < len; ++i) {
-		std::list<unsigned int> &currentBucket = bucketQueue[i];
-		if (!bucketQueue[i].empty()) {
-			std::cout << "\t" << i << ":";
-			for (std::list<unsigned int>::iterator iter = currentBucket.begin();
-					iter != currentBucket.end(); ++iter) {
-				std::cout << *iter << ", ";
-			}
-			std::cout << std::endl;
-		}
-	}
-}
-
 const CalculationResult DialDijkstra::runBidirectional(
 		const AdjacencyArray &graph, const unsigned int source,
 		const unsigned int target) {
@@ -202,10 +186,12 @@ const CalculationResult DialDijkstra::runBidirectional(
 	while (fwElementsInBQ != 0 || bwElementsInBQ != 0) {
 
 		// Retrieve a non-empty bucket in both queues
-		while (fwBucketQueue[fwCurrentPositionInBQ].empty()) {
+		while (fwElementsInBQ != 0
+				&& fwBucketQueue[fwCurrentPositionInBQ].empty()) {
 			fwCurrentPositionInBQ = (fwCurrentPositionInBQ + 1) % bucketCount;
 		}
-		while (bwBucketQueue[bwCurrentPositionInBQ].empty()) {
+		while (bwElementsInBQ != 0
+				&& bwBucketQueue[bwCurrentPositionInBQ].empty()) {
 			bwCurrentPositionInBQ = (bwCurrentPositionInBQ + 1) % bucketCount;
 		}
 
@@ -218,7 +204,8 @@ const CalculationResult DialDijkstra::runBidirectional(
 		const unsigned int bwCurrentNode = bwCurrentBucket.front();
 
 		// FORWARD queue selected
-		if (fwDistances[fwCurrentNode] <= bwDistances[bwCurrentNode]) {
+		if (bwElementsInBQ == 0 || (fwElementsInBQ != 0
+				&& fwDistances[fwCurrentNode] <= bwDistances[bwCurrentNode])) {
 
 			// Pop node from queue
 			fwCurrentBucket.pop_front();
@@ -346,8 +333,7 @@ const CalculationResult DialDijkstra::runBidirectional(
 	}
 
 	const double distance =
-			fwDistances[meetingPoint] != maxValue
-					&& fwDistances[meetingPoint] != maxValue ?
+			meetingPoint != -1 ?
 					fwDistances[meetingPoint] + bwDistances[meetingPoint] :
 					maxValue;
 
@@ -425,9 +411,6 @@ const CalculationResult DialDijkstra::runGoalDirected(
 		bqItemForNode[currentNode] = std::list<unsigned int>::iterator();
 		bqIndexForNode[currentNode] = -1;
 
-//		std::cout << "DM: " << currentNode << " w=" << distances[currentNode]
-//				<< " b=" << currentPositionInBQ << std::endl;
-
 		--elementsInBQ;
 		++pqOps;
 
@@ -460,10 +443,6 @@ const CalculationResult DialDijkstra::runGoalDirected(
 						distances[other] = relaxedDistance;
 						++elementsInBQ;
 
-//						std::cout << "\tINS: " << other << " w="
-//								<< relaxedDistance << " b=" << targetBucket
-//								<< " delta_b=" << targetBucketOffset
-//								<< std::endl;
 					} else {
 
 						// Erase from old bucket
@@ -472,12 +451,6 @@ const CalculationResult DialDijkstra::runGoalDirected(
 						std::list<unsigned int> &oldBucket =
 								bucketQueue[bqIndexForNode[other]];
 						oldBucket.erase(oldIter);
-
-//						std::cout << "\tDK: " << other << " w="
-//								<< relaxedDistance << " b:"
-//								<< bqIndexForNode[other] << "->" << targetBucket
-//								<< " delta_b=" << targetBucketOffset
-//								<< std::endl;
 
 						// Insert into new bucket
 						std::list<unsigned int>::iterator iter = bucket.insert(

@@ -129,7 +129,7 @@ const CalculationResult BHDijkstra::runBidirectional(
 
 	while (!fwPQ.isEmpty() || !bwPQ.isEmpty()) {
 		// Select the queue with the smaller min-key to do the next step
-		if (!fwPQ.isEmpty() && fwPQ.min().getKey() <= bwPQ.min().getKey()) {
+		if (bwPQ.isEmpty() || (!fwPQ.isEmpty() && fwPQ.min().getKey() <= bwPQ.min().getKey())) {
 			const HeapItem &top = fwPQ.min();
 			fwPQ.deleteMin();
 			const unsigned int currentNode = top.getItem();
@@ -287,9 +287,6 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 		const unsigned int currentNode = top.getItem();
 		heapItemForNode[currentNode] = -1;
 
-//		std::cout << "DM: " << currentNode << " w=" << distances[currentNode]
-//				<< " b=" << top.getKey() << std::endl;
-
 		// Early Termination
 		if (target == currentNode) {
 			break;
@@ -311,18 +308,12 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 						distances[other] = relaxedDistance;
 						heapItemForNode[other] = newItem;
 
-//						std::cout << "\tINS: " << other << " w="
-//								<< relaxedDistance << " 'b="
-//								<< (goalDistance - distances[currentNode])
-//								<< std::endl;
 					} else {
 						const unsigned int othersHeapItem =
 								heapItemForNode[other];
 						distances[other] = relaxedDistance;
 						pq.decreaseKey(othersHeapItem, goalDistance);
 
-//						std::cout << "\tDK: " << other << " w="
-//								<< relaxedDistance << std::endl;
 					}
 				} // relaxation condition met
 			} // iteration over neighbors of current node

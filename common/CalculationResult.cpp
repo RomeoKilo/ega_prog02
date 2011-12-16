@@ -37,7 +37,7 @@ std::string CalculationResult::format() const {
 	if (_distance != std::numeric_limits<unsigned int>::max()) {
 		stream << std::setw(10) << std::left << _distance;
 	} else {
-		stream << std::setw(10) << std::left << "Unconnected";
+		stream << std::setw(10) << std::left << "UNCONN";
 	}
 	stream << "|" << std::setw(10) << std::left << _calculationTime;
 	stream << "|" << std::setw(10) << std::left << _pqOperations;

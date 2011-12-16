@@ -124,12 +124,12 @@ const CalculationResult BHDijkstra::runBidirectional(
 	fwHeapItemForNode[source] = fwPQ.insert(source, 0);
 	fwDistances[source] = 0;
 
-	bwHeapItemForNode[source] = bwPQ.insert(target, 0);
+	bwHeapItemForNode[target] = bwPQ.insert(target, 0);
 	bwDistances[target] = 0;
 
-	while (!fwPQ.isEmpty() && !bwPQ.isEmpty()) {
+	while (!fwPQ.isEmpty() || !bwPQ.isEmpty()) {
 		// Select the queue with the smaller min-key to do the next step
-		if (fwPQ.min().getKey() <= bwPQ.min().getKey()) {
+		if (!fwPQ.isEmpty() && fwPQ.min().getKey() <= bwPQ.min().getKey()) {
 			const HeapItem &top = fwPQ.min();
 			fwPQ.deleteMin();
 			const unsigned int currentNode = top.getItem();
@@ -235,8 +235,8 @@ const CalculationResult BHDijkstra::runBidirectional(
 
 	}
 
-	const double distance = fwDistances[meetingPoint]
-			+ bwDistances[meetingPoint];
+	const double distance = meetingPoint != -1 ? fwDistances[meetingPoint]
+			+ bwDistances[meetingPoint] : maxValue;
 
 	delete &fwPQ;
 	delete[] fwDistances;
@@ -329,7 +329,7 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 		}
 	}
 
-	const int distance = distances[target];
+	const unsigned int distance = distances[target];
 
 	delete &pq;
 	delete[] distances;

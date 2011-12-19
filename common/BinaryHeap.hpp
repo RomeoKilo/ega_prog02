@@ -2,6 +2,7 @@
 #define BINARY_HEAP_HPP_
 
 #include "HeapItem.hpp"
+#include "assert.hpp"
 
 #include <vector>
 #include <cassert>
@@ -27,32 +28,25 @@ private:
 	}
 
 	bool _hasLeft(const HeapItem &item) {
-		return 2 * item._getIndex() + 1 < _binaryHeap.size();
+		ASSERT(item._getIndex() >= 0, "");
+		return 2 * (unsigned int) item._getIndex() + 1 < _binaryHeap.size();
 	}
 	HeapItem &_getLeft(const HeapItem &item) {
 		return _items.at(_binaryHeap.at(2 * item._getIndex() + 1));
 	}
 
 	bool _hasRight(const HeapItem &item) {
-		return 2 * item._getIndex() + 2 < _binaryHeap.size();
+		ASSERT(item._getIndex() >= 0, "");
+		return 2 * (unsigned int) item._getIndex() + 2 < _binaryHeap.size();
 	}
 	HeapItem &_getRight(const HeapItem &item) {
 		return _items.at(_binaryHeap.at(2 * item._getIndex() + 2));
 	}
-	void _swapItems(HeapItem &item1, HeapItem &item2) {
-
-		std::swap(_binaryHeap[item1._getIndex()],
-				_binaryHeap[item2._getIndex()]);
-
-		int tmpIndex = item1._getIndex();
-		item1._setIndex(item2._getIndex());
-		item2._setIndex(tmpIndex);
-	}
+	void _swapItems(HeapItem &item1, HeapItem &item2);
 
 public:
 	explicit BinaryHeap() {
 	}
-	;
 
 	unsigned int insert(const unsigned int item, const double key);
 	void decreaseKey(const unsigned int heapItem, const double key);
@@ -70,15 +64,7 @@ public:
 		return 0 == this->size();
 	}
 
-	void print() {
-		std::cout << "BH [";
-		for (std::vector<unsigned int>::const_iterator iter =
-				_binaryHeap.begin(); iter != _binaryHeap.end(); ++iter) {
-			unsigned int index = *iter;
-			std::cout << _items.at(index).getKey() << ", ";
-		}
-		std::cout << "]" << std::endl;
-	}
+	void print() const;
 };
 
 #endif /*BINARY_HEAP_HPP_*/

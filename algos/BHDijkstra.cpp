@@ -31,8 +31,9 @@ const CalculationResult BHDijkstra::runStandard(const AdjacencyArray &graph,
 	unsigned int srcHeapItem = pq.insert(source, 0U);
 	heapItemForNode[source] = srcHeapItem;
 	while (!pq.isEmpty()) {
-		const HeapItem &top = pq.min();
+		const HeapItem top = pq.min();
 		pq.deleteMin();
+
 		++pqOps;
 
 		const unsigned int currentNode = top.getItem();
@@ -129,7 +130,9 @@ const CalculationResult BHDijkstra::runBidirectional(
 
 	while (!fwPQ.isEmpty() || !bwPQ.isEmpty()) {
 		// Select the queue with the smaller min-key to do the next step
-		if (bwPQ.isEmpty() || (!fwPQ.isEmpty() && fwPQ.min().getKey() <= bwPQ.min().getKey())) {
+		if (bwPQ.isEmpty()
+				|| (!fwPQ.isEmpty()
+						&& fwPQ.min().getKey() <= bwPQ.min().getKey())) {
 			const HeapItem &top = fwPQ.min();
 			fwPQ.deleteMin();
 			const unsigned int currentNode = top.getItem();
@@ -174,8 +177,7 @@ const CalculationResult BHDijkstra::runBidirectional(
 					ASSERT(fwHeapItemForNode[other] != maxValue,
 							"Item should be included in forward PQ!");
 
-					const unsigned int othersHeapItem =
-							fwHeapItemForNode[other];
+					const unsigned int othersHeapItem = fwHeapItemForNode[other];
 					fwDistances[other] = relaxedDistance;
 					fwPQ.decreaseKey(othersHeapItem, relaxedDistance);
 				}
@@ -225,8 +227,7 @@ const CalculationResult BHDijkstra::runBidirectional(
 					ASSERT(bwHeapItemForNode[other] != maxValue,
 							"Item should be included in backward PQ!");
 
-					const unsigned int othersHeapItem =
-							bwHeapItemForNode[other];
+					const unsigned int othersHeapItem = bwHeapItemForNode[other];
 					bwDistances[other] = relaxedDistance;
 					bwPQ.decreaseKey(othersHeapItem, relaxedDistance);
 				}
@@ -235,8 +236,10 @@ const CalculationResult BHDijkstra::runBidirectional(
 
 	}
 
-	const double distance = meetingPoint != -1 ? fwDistances[meetingPoint]
-			+ bwDistances[meetingPoint] : maxValue;
+	const double distance =
+			meetingPoint != -1 ?
+					fwDistances[meetingPoint] + bwDistances[meetingPoint] :
+					maxValue;
 
 	delete &fwPQ;
 	delete[] fwDistances;
@@ -247,7 +250,6 @@ const CalculationResult BHDijkstra::runBidirectional(
 	delete[] bwDistances;
 	delete[] bwHeapItemForNode;
 	delete[] bwPoppedFromQueue;
-
 
 	runtimeTimer.stop();
 	const double calculationTime = runtimeTimer.elapsed();

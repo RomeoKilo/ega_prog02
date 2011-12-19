@@ -1,5 +1,7 @@
 #include "BinaryHeap.hpp"
 
+#include <limits>
+
 unsigned int BinaryHeap::insert(const unsigned int item, const double key) {
 	_items.push_back(HeapItem(item, key, _binaryHeap.size()));
 	_binaryHeap.push_back(_items.size() - 1);
@@ -9,17 +11,29 @@ unsigned int BinaryHeap::insert(const unsigned int item, const double key) {
 }
 
 void BinaryHeap::deleteMin() {
-	if (this->size() > 1) {
-		_binaryHeap.at(0) = _binaryHeap.at(_binaryHeap.size() - 1);
-		HeapItem &item = _items.at(_binaryHeap.at(0));
-		item._setIndex(0);
+	ASSERT(this->size() >= 1, "")
 
+	const unsigned int oldPos = _binaryHeap.front();
+	HeapItem &oldItem = _items.at(oldPos);
+	oldItem._unsetIndex();
+
+	if (this->size() > 1) {
+
+		_binaryHeap.at(0) = _binaryHeap.back();
+		HeapItem &item = _items.at(_binaryHeap.front());
+		item._setIndex(0);
+//
+//		if (oldPos != _items.size() - 1) {
+//			_items[oldPos] = _items.back();
+//			_binaryHeap.at(_items[oldPos]._getIndex()) = oldPos;
+//		}
+//
+//		_items.pop_back();
 		_binaryHeap.pop_back();
 
 		this->_siftDown(item);
 	} else {
 		_binaryHeap.pop_back();
-		_items.pop_back();
 	}
 }
 
@@ -55,4 +69,23 @@ void BinaryHeap::_siftDown(HeapItem &item) {
 			_swapItems(item, _getRight(item));
 		}
 	}
+}
+
+void BinaryHeap::_swapItems(HeapItem &item1, HeapItem &item2) {
+
+	std::swap(_binaryHeap[item1._getIndex()], _binaryHeap[item2._getIndex()]);
+
+	int tmpIndex = item1._getIndex();
+	item1._setIndex(item2._getIndex());
+	item2._setIndex(tmpIndex);
+}
+
+void BinaryHeap::print() const {
+	std::cout << "BH [";
+	for (std::vector<unsigned int>::const_iterator iter = _binaryHeap.begin();
+			iter != _binaryHeap.end(); ++iter) {
+		unsigned int index = *iter;
+		std::cout << _items.at(index).getKey() << ", ";
+	}
+	std::cout << "]" << std::endl;
 }

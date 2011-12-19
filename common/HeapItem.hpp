@@ -10,14 +10,19 @@ class HeapItem {
 private:
 	int _index;
 
-	unsigned int _item;
+	int _item;
 	double _key;
 
 	void _setIndex(const unsigned int i) {
 		_index = i;
 	}
 
-	unsigned int _getIndex() const {
+	void _unsetIndex()
+	{
+		_index = -1;
+	}
+
+	int _getIndex() const {
 		return _index;
 	}
 

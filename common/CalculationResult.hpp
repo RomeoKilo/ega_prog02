@@ -25,6 +25,7 @@ public:
 	}
 
 	static std::string format(const std::vector<CalculationResult> &results);
+	static CalculationResult average(const std::vector<CalculationResult> &results);
 	static std::string formattingHeader();
 	std::string format() const;
 	std::string toString() const;

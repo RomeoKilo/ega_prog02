@@ -1,4 +1,5 @@
 #include "CalculationResult.hpp"
+#include "assert.hpp"
 
 #include <sstream>
 #include <iostream>
@@ -30,6 +31,36 @@ std::string CalculationResult::format(
 		stream << result.format();
 	}
 	return stream.str();
+}
+
+CalculationResult CalculationResult::average(
+		const std::vector<CalculationResult> &results) {
+	std::string parameters;
+	int pqOps = -1;
+	double distance = -1.0;
+	double avgCalculationTime = 0.0;
+	for (unsigned int i = 0; i < results.size(); ++i) {
+		const CalculationResult &currentResult = results[i];
+
+		ASSERT(parameters.empty() || parameters == currentResult._parameters,
+				"Can only average over results of the same type!");
+		parameters = currentResult._parameters;
+
+		ASSERT(pqOps < 0 || pqOps == (int)currentResult._pqOperations,
+				"Can only average over results of the same type!");
+		pqOps = currentResult._pqOperations;
+
+		ASSERT(distance < 0 || distance == currentResult._distance, "");
+		distance = currentResult._distance;
+
+		avgCalculationTime += currentResult._calculationTime;
+	}
+
+	avgCalculationTime /= results.size();
+
+	const CalculationResult finalResult(distance, avgCalculationTime, pqOps,
+			parameters);
+	return finalResult;
 }
 
 std::string CalculationResult::format() const {

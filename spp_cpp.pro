@@ -1,8 +1,10 @@
-TARGET = spp_cpp
+TARGET = Dijkstra
 CONFIG += stl \
     debug_and_release
+QT -= core gui
 QMAKE_CXXFLAGS_DEBUG += -ggdb
-QMAKE_CXXFLAGS_DEBUG += -Wno-unused-but-set-variable
+# QMAKE_CXXFLAGS_DEBUG += -Wno-unused-but-set-variable
+QMAKE_CXXFLAGS_RELEASE += -O3
 HEADERS += common/assert.hpp \
     algos/BHDijkstra.hpp \
     common/EdgeIterator.hpp \

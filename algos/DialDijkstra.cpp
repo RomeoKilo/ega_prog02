@@ -332,10 +332,15 @@ const CalculationResult DialDijkstra::runBidirectional(
 		}
 	}
 
-	const double distance =
+	double distance =
 			meetingPoint != -1 ?
 					fwDistances[meetingPoint] + bwDistances[meetingPoint] :
 					maxValue;
+
+	if (source == target)
+	{
+		distance = 0;
+	}
 
 	delete[] fwDistances;
 	delete[] fwBucketQueue;

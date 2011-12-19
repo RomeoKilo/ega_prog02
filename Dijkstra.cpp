@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
 			errorcode = -5;
 		} else {
 			std::cout << "File: " << filename << " with n=" << nodeCount
-					<< " m=" << edgeCount  << std::endl;
+					<< " m=" << edgeCount << std::endl;
 			std::cout << "Query: s=" << source << ", t=" << target << std::endl;
 			if (useBinaryHeap) {
 				if (useBidirectional) {
@@ -145,24 +145,58 @@ int main(int argc, char *argv[]) {
 				}
 			} else //comparison
 			{
-				std::vector<CalculationResult> results;
-				results.push_back(
-						BHDijkstra::runStandard(*adjArray, source, target));
-				results.push_back(
-						BHDijkstra::runBidirectional(*adjArray, source,
-								target));
-				results.push_back(
-						BHDijkstra::runGoalDirected(*adjArray, source, target));
+				const unsigned int numRuns = 10;
+				std::vector<CalculationResult> globalResults;
+				std::vector<CalculationResult> localResults;
+				for (unsigned int i = 0; i < numRuns; ++i)
+					localResults.push_back(
+							BHDijkstra::runStandard(*adjArray, source, target));
 
-				results.push_back(
-						DialDijkstra::runStandard(*adjArray, source, target));
-				results.push_back(
-						DialDijkstra::runBidirectional(*adjArray, source,
-								target));
-				results.push_back(
-						DialDijkstra::runGoalDirected(*adjArray, source,
-								target));
-				std::cout << CalculationResult::format(results) << std::endl;
+				globalResults.push_back(
+						CalculationResult::average(localResults));
+				localResults.clear();
+				for (unsigned int i = 0; i < numRuns; ++i)
+					localResults.push_back(
+							BHDijkstra::runBidirectional(*adjArray, source,
+									target));
+
+				globalResults.push_back(
+						CalculationResult::average(localResults));
+				localResults.clear();
+				for (unsigned int i = 0; i < numRuns; ++i)
+					localResults.push_back(
+							BHDijkstra::runGoalDirected(*adjArray, source,
+									target));
+
+				globalResults.push_back(
+						CalculationResult::average(localResults));
+				localResults.clear();
+				for (unsigned int i = 0; i < numRuns; ++i)
+					localResults.push_back(
+							DialDijkstra::runStandard(*adjArray, source,
+									target));
+
+				globalResults.push_back(
+						CalculationResult::average(localResults));
+				localResults.clear();
+				for (unsigned int i = 0; i < numRuns; ++i)
+					localResults.push_back(
+							DialDijkstra::runBidirectional(*adjArray, source,
+									target));
+
+				globalResults.push_back(
+						CalculationResult::average(localResults));
+				localResults.clear();
+				for (unsigned int i = 0; i < numRuns; ++i)
+					localResults.push_back(
+							DialDijkstra::runGoalDirected(*adjArray, source,
+									target));
+
+				globalResults.push_back(
+						CalculationResult::average(localResults));
+				localResults.clear();
+
+				std::cout << CalculationResult::format(globalResults) << std::endl;
 			}
 		}
 	} else {

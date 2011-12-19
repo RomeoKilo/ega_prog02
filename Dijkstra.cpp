@@ -146,6 +146,8 @@ int main(int argc, char *argv[]) {
 			} else //comparison
 			{
 				const unsigned int numRuns = 10;
+				std::cout << "Running comparison tests with " << numRuns
+						<< " runs per configuration..." << std::endl;
 				std::vector<CalculationResult> globalResults;
 				std::vector<CalculationResult> localResults;
 				for (unsigned int i = 0; i < numRuns; ++i)
@@ -196,7 +198,8 @@ int main(int argc, char *argv[]) {
 						CalculationResult::average(localResults));
 				localResults.clear();
 
-				std::cout << CalculationResult::format(globalResults) << std::endl;
+				std::cout << CalculationResult::format(globalResults)
+						<< std::endl;
 			}
 		}
 	} else {

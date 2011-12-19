@@ -11,6 +11,11 @@ private:
 	unsigned int _pqOperations;
 	std::string _parameters;
 public:
+	/**
+	 * Initializes the result with all necessary information.
+	 * If distance is set to MAX_UINT, then this is equivalent to a
+	 * non-existing route.
+	 */
 	CalculationResult(const double distance, const double calculationTime,
 			const unsigned int pqOps, const std::string &parameters) :
 			_distance(distance), //

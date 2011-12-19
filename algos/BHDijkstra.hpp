@@ -1,7 +1,6 @@
 #ifndef BH_DIJKSTRA_HPP_
 #define BH_DIJKSTRA_HPP_
 
-#include <tr1/memory>
 class CalculationResult;
 class AdjacencyArray;
 class BHDijkstra {

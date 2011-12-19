@@ -1,8 +1,6 @@
 #ifndef DIAL_DIJKSTRA_HPP_
 #define DIAL_DIJKSTRA_HPP_
 
-#include <list>
-
 class AdjacencyArray;
 class CalculationResult;
 
@@ -17,6 +15,5 @@ public:
 	static const CalculationResult runGoalDirected(
 			const AdjacencyArray &graph,
 			const unsigned int source, const unsigned int target);
-	static void print(std::list<unsigned int> *bucketQueue, unsigned int len, unsigned int current);
 };
 #endif

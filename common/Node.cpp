@@ -5,7 +5,7 @@
 static const double PI = 3.141592653589793238462643383279502884197;
 
 /**
- * Returns a lower bound for the distance ot the two given nodes.
+ * Returns a lower bound for the distance of the two given nodes.
  * The distance is measured in decimeters.
  */
 double Node::lowerDistanceBound(const Node &node1, const Node &node2) {

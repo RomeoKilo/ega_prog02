@@ -3,6 +3,11 @@
 
 #include <ctime>
 
+/**
+ * Class for measuring time.
+ * Start measurement with start(), stop it with stop() and get the elapsed
+ * time in milliseconds by calling elapsed().
+ */
 class Timer {
 private:
 	clock_t begin;
@@ -15,7 +20,7 @@ public:
 		end = clock();
 	}
 	double elapsed() {
-		return 1000 * (end - begin) / CLOCKS_PER_SEC;
+		return 1000.0 * (end - begin) / CLOCKS_PER_SEC;
 	}
 };
 

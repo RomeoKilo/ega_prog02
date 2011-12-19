@@ -11,7 +11,6 @@ HEADERS += common/assert.hpp \
     common/HeapItem.hpp \
     common/CalculationResult.hpp \
     algos/DialDijkstra.hpp \
-    common/PriorityQueue.hpp \
     common/BinaryHeap.hpp \
     common/Node.hpp \
     common/Edge.hpp \

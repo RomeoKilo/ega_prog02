@@ -1,0 +1,29 @@
+This project implements Dijkstra's basic shortest path algorithm and 
+some variants of it.
+
+The project can be build by calling
+
+	qmake spp_cpp.pro
+(only when files have been changed) and afterwards:
+	make release
+or
+	make debug
+.
+
+Some test calls are provided in the file test.sh.
+
+Calling the program
+===================
+
+The program can be called as follows:
+
+	./spp_cpp <in_file> -s <src> -t <target> <options>
+
+Valid options are:
+	-h		Dijkstra with binary heap
+	-h -b 		... and bidirectional search
+	-h -z 		... and goal-directed search
+	-d		Dijkstra as proposed by Dial
+	-d -b 		... with bidirectional search
+	-d -z 		... with goal-directed search
+	-a		comparison test running all of the above options

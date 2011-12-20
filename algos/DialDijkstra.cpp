@@ -377,17 +377,7 @@ const CalculationResult DialDijkstra::runGoalDirected(
 	unsigned int maxDistanceToTarget = 0;
 	unsigned int *distanceToTarget = new unsigned int[nodeCount];
 
-	long minLat = std::numeric_limits<long>::max();
-	long minLng = std::numeric_limits<long>::max();
-	long maxLat = std::numeric_limits<long>::min();
-	long maxLng = std::numeric_limits<long>::min();
-
 	for (unsigned int i = 0; i < nodeCount; ++i) {
-		const Node &node = graph.nodeForID(i);
-		minLat = std::min(minLat, node.getLat());
-		minLng = std::min(minLng, node.getLng());
-		maxLat = std::max(maxLat, node.getLat());
-		maxLng = std::max(maxLng, node.getLng());
 
 		distanceToTarget[i] = static_cast<int>(graph.distanceBound(i, target));
 		maxDistanceToTarget = std::max(distanceToTarget[i],

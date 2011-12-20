@@ -2,18 +2,28 @@
 #define NODE_HPP_
 class Node {
 private:
-	long _lng;
-	long _lat;
+	int _lng;
+	int _lat;
 public:
-	Node(){}
-	Node(const long lng, const long lat) :
+	Node() {
+	}
+	Node(const int lng, const int lat) :
 			_lng(lng), _lat(lat) {
 	}
+
 	static double lowerDistanceBound(const Node &node1, const Node &node2);
-	long getLat() const {
+
+	/**
+	 * Returns the true latitude coordinate of this node
+	 */
+	int getLat() const {
 		return _lat;
 	}
-	long getLng() const {
+
+	/**
+	 * Returns the true longitude coordinate of this node
+	 */
+	int getLng() const {
 		return _lng;
 	}
 };

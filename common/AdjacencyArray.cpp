@@ -20,7 +20,7 @@ bool AdjacencyArray::hasBackwardMapping() const {
 	return _hasBackwardMapping;
 }
 
-const Node &AdjacencyArray::nodeForID(const unsigned int id) const{
+const Node &AdjacencyArray::nodeForID(const unsigned int id) const {
 	return _node_list[id];
 }
 OutgoingEdgeIterator AdjacencyArray::outgoingOf(const unsigned int node) const {
@@ -34,8 +34,8 @@ IncomingEdgeIterator AdjacencyArray::incomingOf(const unsigned int node) const {
 	return IncomingEdgeIterator(start, end, *this);
 }
 
-shared_ptr<const AdjacencyArray> AdjacencyArray::fromFile(const std::string &filename,
-		const bool generateBackwardMapping) {
+shared_ptr<const AdjacencyArray> AdjacencyArray::fromFile(
+		const std::string &filename, const bool generateBackwardMapping) {
 
 	FILE *input = fopen(filename.c_str(), "r");
 
@@ -62,10 +62,10 @@ shared_ptr<const AdjacencyArray> AdjacencyArray::fromFile(const std::string &fil
 		}
 		for (unsigned int i = 0; i < nodecount; ++i) {
 			unsigned int nodeid;
-			long lat;
-			long lng;
+			int lat;
+			int lng;
 
-			fscanf(input, "v %d %ld %ld\n", &nodeid, &lng, &lat);
+			fscanf(input, "v %d %d %d\n", &nodeid, &lng, &lat);
 
 			adjArray._node_list.at(i) = Node(-lng, lat);
 			adjArray._forward_nodes.at(i) = 0;
@@ -164,8 +164,8 @@ void AdjacencyArray::print() const {
 //	}
 }
 
-double AdjacencyArray::distanceBound(const unsigned int first, const unsigned int second) const
-{
+double AdjacencyArray::distanceBound(const unsigned int first,
+		const unsigned int second) const {
 	const Node &firstNode = _node_list.at(first);
 	const Node &secondNode = _node_list.at(second);
 

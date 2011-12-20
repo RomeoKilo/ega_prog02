@@ -204,8 +204,10 @@ const CalculationResult DialDijkstra::runBidirectional(
 		const unsigned int bwCurrentNode = bwCurrentBucket.front();
 
 		// FORWARD queue selected
-		if (bwElementsInBQ == 0 || (fwElementsInBQ != 0
-				&& fwDistances[fwCurrentNode] <= bwDistances[bwCurrentNode])) {
+		if (bwElementsInBQ == 0
+				|| (fwElementsInBQ != 0
+						&& fwDistances[fwCurrentNode]
+								<= bwDistances[bwCurrentNode])) {
 
 			// Pop node from queue
 			fwCurrentBucket.pop_front();
@@ -337,8 +339,7 @@ const CalculationResult DialDijkstra::runBidirectional(
 					fwDistances[meetingPoint] + bwDistances[meetingPoint] :
 					maxValue;
 
-	if (source == target)
-	{
+	if (source == target) {
 		distance = 0;
 	}
 
@@ -372,15 +373,27 @@ const CalculationResult DialDijkstra::runGoalDirected(
 	const unsigned int maxEdgeLength = graph.getMaxEdgeLength();
 	unsigned int pqOps = 0;
 
-	unsigned int maxDistanceToTarget = 0;
 	unsigned int *distances = new unsigned int[nodeCount];
+	unsigned int maxDistanceToTarget = 0;
 	unsigned int *distanceToTarget = new unsigned int[nodeCount];
 
+	long minLat = std::numeric_limits<long>::max();
+	long minLng = std::numeric_limits<long>::max();
+	long maxLat = std::numeric_limits<long>::min();
+	long maxLng = std::numeric_limits<long>::min();
+
 	for (unsigned int i = 0; i < nodeCount; ++i) {
+		const Node &node = graph.nodeForID(i);
+		minLat = std::min(minLat, node.getLat());
+		minLng = std::min(minLng, node.getLng());
+		maxLat = std::max(maxLat, node.getLat());
+		maxLng = std::max(maxLng, node.getLng());
+
 		distanceToTarget[i] = static_cast<int>(graph.distanceBound(i, target));
 		maxDistanceToTarget = std::max(distanceToTarget[i],
 				maxDistanceToTarget);
 	}
+
 	const unsigned int bucketCount = maxEdgeLength + maxDistanceToTarget + 1;
 
 	std::list<unsigned int>::iterator *bqItemForNode = //
@@ -416,6 +429,9 @@ const CalculationResult DialDijkstra::runGoalDirected(
 		bqItemForNode[currentNode] = std::list<unsigned int>::iterator();
 		bqIndexForNode[currentNode] = -1;
 
+		const double distanteOfCurrentToTarget = graph.distanceBound(
+				currentNode, target);
+
 		--elementsInBQ;
 		++pqOps;
 
@@ -431,8 +447,8 @@ const CalculationResult DialDijkstra::runGoalDirected(
 						+ edge.getWeight();
 				const unsigned int targetBucketOffset =
 						static_cast<unsigned int>(edge.getWeight()
-								+ distanceToTarget[other]
-								- distanceToTarget[currentNode]);
+								+ graph.distanceBound(other, target)
+								- distanteOfCurrentToTarget);
 
 				const unsigned int targetBucket = (currentPositionInBQ
 						+ targetBucketOffset) % bucketCount;

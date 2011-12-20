@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
 				}
 			} else //comparison
 			{
-				const unsigned int numRuns = 10;
+				const unsigned int numRuns = 1;
 				std::cout << "Running comparison tests with " << numRuns
 						<< " runs per configuration..." << std::endl;
 				std::vector<CalculationResult> globalResults;

@@ -62,10 +62,10 @@ shared_ptr<const AdjacencyArray> AdjacencyArray::fromFile(const std::string &fil
 		}
 		for (unsigned int i = 0; i < nodecount; ++i) {
 			unsigned int nodeid;
-			double lat;
-			double lng;
+			long lat;
+			long lng;
 
-			fscanf(input, "v %d %lf %lf\n", &nodeid, &lng, &lat);
+			fscanf(input, "v %d %ld %ld\n", &nodeid, &lng, &lat);
 
 			adjArray._node_list.at(i) = Node(-lng, lat);
 			adjArray._forward_nodes.at(i) = 0;

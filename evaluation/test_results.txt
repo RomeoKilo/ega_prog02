@@ -1,0 +1,169 @@
+Test run 1
+File: ../../prog02/FLA.sp with n=1070377 m=2712798
+Query: s=123456, t=123456
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+0         |10        |1         |heap                                          |
+0         |20        |2         |heap, bidirectional                           |
+0         |10        |1         |heap, A*                                      |
+0         |10        |1         |dial                                          |
+0         |40        |2         |dial, bidirectional                           |
+0         |510       |1         |dial, A*                                      |
+
+Test run 2
+File: ../../prog02/NYC.sp with n=264346 m=733846
+Query: s=96008, t=172944
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+900041    |80        |248912    |heap                                          |
+900041    |70        |162783    |heap, bidirectional                           |
+900041    |230       |170353    |heap, A*                                      |
+900041    |60        |248912    |dial                                          |
+900041    |70        |162783    |dial, bidirectional                           |
+900041    |220       |170354    |dial, A*                                      |
+
+Test run 3
+File: ../../prog02/NYC.sp with n=264346 m=733846
+Query: s=1, t=100
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+114015    |0         |4498      |heap                                          |
+114015    |10        |3201      |heap, bidirectional                           |
+114015    |0         |2591      |heap, A*                                      |
+114015    |0         |4498      |dial                                          |
+114015    |10        |3201      |dial, bidirectional                           |
+114015    |110       |2591      |dial, A*                                      |
+
+Test run 4
+File: ../../prog02/NYC.sp with n=264346 m=733846
+Query: s=500, t=170000
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+707022    |40        |134293    |heap                                          |
+707022    |50        |106148    |heap, bidirectional                           |
+707022    |70        |55649     |heap, A*                                      |
+707022    |40        |134294    |dial                                          |
+707022    |40        |106148    |dial, bidirectional                           |
+707022    |140       |55649     |dial, A*                                      |
+
+Test run 5
+File: ../../prog02/NYC.sp with n=264346 m=733846
+Query: s=100000, t=150000
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+506442    |50        |140273    |heap                                          |
+506442    |30        |93076     |heap, bidirectional                           |
+506442    |80        |56112     |heap, A*                                      |
+506442    |40        |140273    |dial                                          |
+506442    |30        |93076     |dial, bidirectional                           |
+506442    |140       |56112     |dial, A*                                      |
+
+Test run 6
+File: ../../prog02/NYC.sp with n=264346 m=733846
+Query: s=5000, t=100000
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+820921    |60        |217746    |heap                                          |
+820921    |60        |157191    |heap, bidirectional                           |
+820921    |190       |132669    |heap, A*                                      |
+820921    |50        |217746    |dial                                          |
+820921    |60        |157191    |dial, bidirectional                           |
+820921    |190       |132670    |dial, A*                                      |
+
+Test run 7
+File: ../../prog02/NYC.sp with n=264346 m=733846
+Query: s=142674, t=123876
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+406508    |50        |152136    |heap                                          |
+406508    |50        |80095     |heap, bidirectional                           |
+406508    |60        |47060     |heap, A*                                      |
+406508    |40        |152136    |dial                                          |
+406508    |30        |80095     |dial, bidirectional                           |
+406508    |130       |47061     |dial, A*                                      |
+
+Test run 8
+File: ../../prog02/NYC.sp with n=264346 m=733846
+Query: s=3424, t=43214
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+923412    |80        |200703    |heap                                          |
+923412    |60        |180700    |heap, bidirectional                           |
+923412    |170       |118514    |heap, A*                                      |
+923412    |50        |200703    |dial                                          |
+923412    |60        |180701    |dial, bidirectional                           |
+923412    |180       |118514    |dial, A*                                      |
+
+Test run 9
+File: ../../prog02/NYC.sp with n=264346 m=733846
+Query: s=8797, t=145784
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+461545    |40        |140609    |heap                                          |
+461545    |50        |101377    |heap, bidirectional                           |
+461545    |70        |55677     |heap, A*                                      |
+461545    |40        |140609    |dial                                          |
+461545    |50        |101378    |dial, bidirectional                           |
+461545    |130       |55677     |dial, A*                                      |
+
+Test run 10
+File: ../../prog02/NYC.sp with n=264346 m=733846
+Query: s=75849, t=164985
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+739783    |50        |166637    |heap                                          |
+739783    |70        |147434    |heap, bidirectional                           |
+739783    |110       |89135     |heap, A*                                      |
+739783    |50        |166637    |dial                                          |
+739783    |50        |147434    |dial, bidirectional                           |
+739783    |160       |89135     |dial, A*                                      |
+
+Test run 11
+File: ../../prog02/NYC.sp with n=264346 m=733846
+Query: s=98748, t=2347
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+847551    |80        |252483    |heap                                          |
+847551    |60        |138687    |heap, bidirectional                           |
+847551    |180       |133807    |heap, A*                                      |
+847551    |60        |252483    |dial                                          |
+847551    |50        |138687    |dial, bidirectional                           |
+847551    |190       |133807    |dial, A*                                      |
+
+Test run 12
+File: ../../prog02/samples/unconnected.graph with n=2 m=0
+Query: s=0, t=1
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+UNCONN    |0         |1         |heap                                          |
+UNCONN    |0         |2         |heap, bidirectional                           |
+UNCONN    |0         |1         |heap, A*                                      |
+UNCONN    |0         |1         |dial                                          |
+UNCONN    |0         |2         |dial, bidirectional                           |
+UNCONN    |0         |1         |dial, A*                                      |
+
+Test run 13
+File: ../../prog02/FLA.sp with n=1070377 m=2712798
+Query: s=0, t=1
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+5.12656e+06|270       |808852    |heap                                          |
+5.12656e+06|160       |375138    |heap, bidirectional                           |
+5.12656e+06|280       |226079    |heap, A*                                      |
+5.12656e+06|250       |808852    |dial                                          |
+5.12656e+06|190       |375138    |dial, bidirectional                           |
+5.12656e+06|650       |226079    |dial, A*                                      |
+

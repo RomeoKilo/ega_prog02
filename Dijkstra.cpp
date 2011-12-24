@@ -221,6 +221,8 @@ int main(int argc, char *argv[]) {
 				for (unsigned int r = 0; r < numRuns; ++r) {
 					const unsigned int randTarget = rand() % nodeCount;
 					const unsigned int randSource = rand() % nodeCount;
+                    std::cout << std::endl;
+                    std::cout << "Run number: " << r << std::endl;
 					std::cout << "Source: " << randSource << " -> Target: " << randTarget << std::endl;
 
 					std::vector<CalculationResult> globalResults;
@@ -290,6 +292,7 @@ int main(int argc, char *argv[]) {
 					std::cout << CalculationResult::format(globalResults)
 							<< std::endl;
 				} // iteration over random test cases
+				
 				std::vector<CalculationResult> overallResults;
 				overallResults.push_back(CalculationResult::average(globalResultsForBHStd));
 				overallResults.push_back(CalculationResult::average(globalResultsForBHBi));
@@ -298,6 +301,7 @@ int main(int argc, char *argv[]) {
 				overallResults.push_back(CalculationResult::average(globalResultsForDialBi));
 				overallResults.push_back(CalculationResult::average(globalResultsForDialGoal));
 
+                std::cout << "Overall results of random testing" << std::endl;
 				std::cout << CalculationResult::format(overallResults)
 						<< std::endl;
 			}

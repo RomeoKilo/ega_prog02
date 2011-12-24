@@ -27,3 +27,6 @@ Valid options are:
 	-d -b 		... with bidirectional search
 	-d -z 		... with goal-directed search
 	-a		comparison test running all of the above options
+	
+	-r		random testing. For simplicity, parameter -t will be 
+			interpreted as number of test runs.

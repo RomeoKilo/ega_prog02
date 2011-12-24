@@ -36,7 +36,7 @@ std::string CalculationResult::format(
 CalculationResult CalculationResult::average(
 		const std::vector<CalculationResult> &results) {
 	std::string parameters;
-	int pqOps = -1;
+    double avgPqOps = 0;
 	double distance = -1.0;
 	double avgCalculationTime = 0.0;
 	for (unsigned int i = 0; i < results.size(); ++i) {
@@ -46,9 +46,7 @@ CalculationResult CalculationResult::average(
 				"Can only average over results of the same type!");
 		parameters = currentResult._parameters;
 
-//		ASSERT(pqOps < 0 || pqOps == (int)currentResult._pqOperations,
-//				"Can only average over results of the same type!");
-		pqOps = currentResult._pqOperations;
+        avgPqOps += currentResult._pqOperations;
 
 		ASSERT(distance < 0 || distance == currentResult._distance, "");
 		distance = currentResult._distance;
@@ -57,8 +55,9 @@ CalculationResult CalculationResult::average(
 	}
 
 	avgCalculationTime /= results.size();
+    avgPqOps /= results.size();
 
-	const CalculationResult finalResult(distance, avgCalculationTime, pqOps,
+    const CalculationResult finalResult(distance, avgCalculationTime, avgPqOps,
 			parameters);
 	return finalResult;
 }

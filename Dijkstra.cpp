@@ -208,8 +208,8 @@ int main(int argc, char *argv[]) {
 			} else if (runRandom) {
 				const unsigned int numRuns = target;
 				srand(time(NULL));
-				std::cout << "Running comparison tests with " << numRuns
-						<< " runs per configuration..." << std::endl;
+				std::cout << "Running random tests with " << numRuns
+						<< " runs..." << std::endl;
 
 				std::vector<CalculationResult> globalResultsForBHStd;
 				std::vector<CalculationResult> globalResultsForBHBi;
@@ -222,7 +222,7 @@ int main(int argc, char *argv[]) {
 					const unsigned int randTarget = rand() % nodeCount;
 					const unsigned int randSource = rand() % nodeCount;
                     std::cout << std::endl;
-                    std::cout << "Run number: " << r << std::endl;
+                    std::cout << "Run number: " << (r+1) << std::endl;
 					std::cout << "Source: " << randSource << " -> Target: " << randTarget << std::endl;
 
 					std::vector<CalculationResult> globalResults;
@@ -301,7 +301,7 @@ int main(int argc, char *argv[]) {
 				overallResults.push_back(CalculationResult::average(globalResultsForDialBi));
 				overallResults.push_back(CalculationResult::average(globalResultsForDialGoal));
 
-                std::cout << "Overall results of random testing" << std::endl;
+                std::cout << "Overall results of random testing:\n" << std::endl;
 				std::cout << CalculationResult::format(overallResults)
 						<< std::endl;
 			}

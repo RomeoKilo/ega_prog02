@@ -140,6 +140,17 @@ ist.
 
 Zusätzlich zur Testsuite \emph{test.sh} wurde noch eine Reihe zufälliger
 Tests auf dem Graphen \emph{COL.sp} durchgeführt.
+Der Befehl dafür lautete:
+\begin{verbatim}
+  ./Dijkstra ../../prog02/COL.sp -s 0 -t 50 -r
+\end{verbatim}
+Die Ergebnisse dieses Testlaufs finden sich in der Datei \emph{random\_test.txt},
+wobei die Ergebnisse am Ende der Datei Mittelwerte über die Laufzeit und
+die Anzahl der PQ-Operationen enthalten.
+
+Man sieht, dass im Mittel \emph{heap, bidirectional} mit rund 62ms am 
+schnellsten und \emph{dial, A*} und \emph{heap, A*} mit 291ms bzw.\,148ms am
+langsamsten waren.
 
 \section{Fazit}
 

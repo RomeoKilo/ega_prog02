@@ -61,6 +61,17 @@ Sie wurden mit der aktuellen Version der Implementierung mittels der Befehlssequ
 Die Varianten werden von nun an stets so benannt, wie es auch in der Ausgabe
 zu sehen ist.
 
+Die öffentliche Testdatendatei \emph{FLA.sp} wurde so verändert, dass ein
+weiterer Knoten eingefügt wurde, der keine Kanten besitzt:
+\begin{verbatim}
+  v 1070376 82544500 30998800
+\end{verbatim}
+Dadurch ändert sich natürlich die Kopfzeile:
+\begin{verbatim}
+  g n 1070377 m 2712798
+\end{verbatim}
+
+
 \section{Übersicht}
 
 Um dies nicht in jedem weiteren Abschnitt zu erwähnen, sei hier angemerkt,
@@ -69,8 +80,8 @@ ob eine bestimmte Variante schneller ist als eine andere.
 Bei den weiteren Aussagen wird dies ignoriert und davon ausgegangen, dass die
 vorliegende Implementierung optimal ist.
 
-Die Ergebnisse der 12 relevanten Testfälle ist in Tabelle~\ref{ref:results}
-zu sehen. Testfall 12 wurde ausgelassen, da es sich hierbei nur um einen
+Die Ergebnisse der 13 relevanten Testfälle ist in Tabelle~\ref{ref:results}
+zu sehen. Testfall 13 wurde ausgelassen, da es sich hierbei nur um einen
 Grenzfall für einen unverbundenen Graphen mit 2 Knoten handelt.
 
 \begin{figure}[htbp]
@@ -87,8 +98,8 @@ Grenzfall für einen unverbundenen Graphen mit 2 Knoten handelt.
 
 Die Implementierung mit einer einfachen Bucket Queue hat sich als recht 
 effizient erwiesen.
-In 7 von 12 Tests (entspricht 58\%) war \emph{Dial} am schnellsten, in 
-9 von 12 Fällen (entspricht 75\%) war diese Variante unter den besten
+In 8 von 13 Tests (entspricht 62\%) war \emph{Dial} am schnellsten, in 
+10 von 13 Fällen (entspricht 77\%) war diese Variante unter den besten
 beiden Laufzeiten.
 
 \section{Vergleich zwischen Binärem Heap und Bucket Queue}
@@ -97,20 +108,20 @@ Setzt man die Implementierungen mit binärem Heap mit der entsprechenden
 Implementierung mittels Bucket Queue  in Beziehung, so erhält man folgendes
 Ergebnis, wenn man jeweils das beste Ergebnis der Gruppe betrachtet:
 
-In 5 von 12 Fällen (entspricht 42\%) war die Bucket Queue dem Heap eindeutig überlegen,
-in 6 von 12 Fällen (entspricht 50\%) waren beide Gruppen gleich stark und
-in 1 von 12 Fällen (entspricht 8\%) war der Heap eindeutig überlegen
+In 6 von 13 Fällen (entspricht 46\%) war die Bucket Queue dem Heap eindeutig überlegen,
+in 6 von 13 Fällen (entspricht 46\%) waren beide Gruppen gleich stark und
+in 1 von 13 Fällen (entspricht 8\%) war der Heap eindeutig überlegen
  (Zeile \glqq Heap./.Dial\grqq\ in der Tabelle).
 
 Im ersten Fall (BQ vor Heap) war die beste Heap-Implementierung
-jeweils 16{,}7\%, 20{,}0\%, 66{,}7\% und 20{,}0\% langsamer als die beste
+jeweils 16{,}7\%, 20{,}0\%, 66{,}7\%, 20{,}0\% und 10{,}0\% langsamer als die beste
 Bucket Queue-Implementierung, im umgekehrten Fall erhält 
 man eine Laufzeitdifferenz von 18{,}8\% (Zeile \glqq Abstand\grqq\ in der Tabelle).
 
 \section{Zielgerichtete Suche}
 
 Beim ersten Betrachten der Ergebnisse fällt auf, dass \emph{Dial, A*} in
-11 von 12 Testläufen (92\%) die größe Laufzeit aufweist.
+11 von 13 Testläufen (85\%) die größe Laufzeit aufweist.
 Betrachtet man die zielgerichtete Suche (\emph{$\cdot$,A*}) im Allgemeinen,
 dann ist eine der beiden Implementierungen in allen Testläufen am langsamsten.
 
@@ -124,6 +135,11 @@ schlechtester Laufzeit bei 1:51), der in $\Theta(n)$ liegt.
 Verglichen mit den anderen 4 Varianten ist ein weiteres Problem, dass die 
 Distanzberechnung auf einer Kugel eine verhältnisämßig aufwändige Operation 
 ist.
+
+\section{Zufälliges Testen}
+
+Zusätzlich zur Testsuite \emph{test.sh} wurde noch eine Reihe zufälliger
+Tests auf dem Graphen \emph{COL.sp} durchgeführt.
 
 \section{Fazit}
 

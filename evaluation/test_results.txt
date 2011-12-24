@@ -167,3 +167,15 @@ d(s,t)    |time(ms)  |PQ-ops    |params                                        |
 5.12656e+06|190       |375138    |dial, bidirectional                           |
 5.12656e+06|650       |226079    |dial, A*                                      |
 
+Test run 14
+File: ../../prog02/FLA.sp with n=1070377 m=2712798
+Query: s=0, t=1070376
+Running comparison tests with 1 runs per configuration...
+d(s,t)    |time(ms)  |PQ-ops    |params                                        |
+--------------------------------------------------------------------------------
+UNCONN    |330       |1070376   |heap                                          |
+UNCONN    |360       |1070377   |heap, bidirectional                           |
+UNCONN    |1220      |1070376   |heap, A*                                      |
+UNCONN    |300       |1070376   |dial                                          |
+UNCONN    |350       |1070377   |dial, bidirectional                           |
+UNCONN    |1180      |1070381   |dial, A*                                      |

@@ -10,6 +10,7 @@
 #include <fstream>
 #include <unistd.h>
 #include <cstdlib>
+#include <ctime>
 
 using std::tr1::shared_ptr;
 
@@ -37,9 +38,10 @@ int main(int argc, char *argv[]) {
 	bool useBidirectional = false;
 	bool useGoalDirected = false;
 	bool runComparison = false;
+	bool runRandom = false;
 
 	char c;
-	while ((c = getopt(argc, argv, "s:t:hdbza")) != -1) {
+	while ((c = getopt(argc, argv, "s:t:hdbzar")) != -1) {
 		switch (c) {
 		case 's':
 			source = atoi(optarg);
@@ -73,14 +75,17 @@ int main(int argc, char *argv[]) {
 		case 'a':
 			runComparison = true;
 			break;
+		case 'r':
+			runRandom = true;
+			break;
 		}
 	}
 
 	// sanity check
 
-	if (!useBinaryHeap && !useDialsImplementation && !runComparison) {
+	if (!useBinaryHeap && !useDialsImplementation && !runComparison && !runRandom) {
 		std::cerr
-				<< "Either binary comparison mode,  heap or Dial's implementation must be chosen! (-a,-h or -d)"
+				<< "Either comparison mode, random testing,  heap or Dial's implementation must be chosen! (-a,-r,-h or -d)"
 				<< std::endl;
 		errorcode = -1;
 	}
@@ -143,7 +148,7 @@ int main(int argc, char *argv[]) {
 							*adjArray, source, target);
 					std::cout << result.toString() << std::endl;
 				}
-			} else //comparison
+			} else if (runComparison) //comparison
 			{
 				const unsigned int numRuns = 1;
 				std::cout << "Running comparison tests with " << numRuns
@@ -199,6 +204,101 @@ int main(int argc, char *argv[]) {
 				localResults.clear();
 
 				std::cout << CalculationResult::format(globalResults)
+						<< std::endl;
+			} else if (runRandom) {
+				const unsigned int numRuns = target;
+				srand(time(NULL));
+				std::cout << "Running comparison tests with " << numRuns
+						<< " runs per configuration..." << std::endl;
+
+				std::vector<CalculationResult> globalResultsForBHStd;
+				std::vector<CalculationResult> globalResultsForBHBi;
+				std::vector<CalculationResult> globalResultsForBHGoal;
+				std::vector<CalculationResult> globalResultsForDialStd;
+				std::vector<CalculationResult> globalResultsForDialBi;
+				std::vector<CalculationResult> globalResultsForDialGoal;
+
+				for (unsigned int r = 0; r < numRuns; ++r) {
+					const unsigned int randTarget = rand() % nodeCount;
+					const unsigned int randSource = rand() % nodeCount;
+					std::cout << "Source: " << randSource << " -> Target: " << randTarget << std::endl;
+
+					std::vector<CalculationResult> globalResults;
+					std::vector<CalculationResult> localResults;
+					for (unsigned int i = 0; i < numRuns; ++i)
+						localResults.push_back(
+								BHDijkstra::runStandard(*adjArray, randSource,
+										randTarget));
+
+					globalResults.push_back(
+							CalculationResult::average(localResults));
+					globalResultsForBHStd.push_back(
+							CalculationResult::average(localResults));
+					localResults.clear();
+					for (unsigned int i = 0; i < numRuns; ++i)
+						localResults.push_back(
+								BHDijkstra::runBidirectional(*adjArray,
+										randSource, randTarget));
+
+					globalResults.push_back(
+							CalculationResult::average(localResults));
+					globalResultsForBHBi.push_back(
+							CalculationResult::average(localResults));
+					localResults.clear();
+					for (unsigned int i = 0; i < numRuns; ++i)
+						localResults.push_back(
+								BHDijkstra::runGoalDirected(*adjArray,
+										randSource, randTarget));
+
+					globalResults.push_back(
+							CalculationResult::average(localResults));
+					globalResultsForBHGoal.push_back(
+							CalculationResult::average(localResults));
+					localResults.clear();
+					for (unsigned int i = 0; i < numRuns; ++i)
+						localResults.push_back(
+								DialDijkstra::runStandard(*adjArray, randSource,
+										randTarget));
+
+					globalResults.push_back(
+							CalculationResult::average(localResults));
+					globalResultsForDialStd.push_back(
+							CalculationResult::average(localResults));
+					localResults.clear();
+					for (unsigned int i = 0; i < numRuns; ++i)
+						localResults.push_back(
+								DialDijkstra::runBidirectional(*adjArray,
+										randSource, randTarget));
+
+					globalResults.push_back(
+							CalculationResult::average(localResults));
+					globalResultsForDialBi.push_back(
+							CalculationResult::average(localResults));
+					localResults.clear();
+
+					for (unsigned int i = 0; i < numRuns; ++i)
+						localResults.push_back(
+								DialDijkstra::runGoalDirected(*adjArray,
+										randSource, randTarget));
+
+					globalResults.push_back(
+							CalculationResult::average(localResults));
+					globalResultsForDialGoal.push_back(
+							CalculationResult::average(localResults));
+					localResults.clear();
+
+					std::cout << CalculationResult::format(globalResults)
+							<< std::endl;
+				} // iteration over random test cases
+				std::vector<CalculationResult> overallResults;
+				overallResults.push_back(CalculationResult::average(globalResultsForBHStd));
+				overallResults.push_back(CalculationResult::average(globalResultsForBHBi));
+				overallResults.push_back(CalculationResult::average(globalResultsForBHGoal));
+				overallResults.push_back(CalculationResult::average(globalResultsForDialStd));
+				overallResults.push_back(CalculationResult::average(globalResultsForDialBi));
+				overallResults.push_back(CalculationResult::average(globalResultsForDialGoal));
+
+				std::cout << CalculationResult::format(overallResults)
 						<< std::endl;
 			}
 		}

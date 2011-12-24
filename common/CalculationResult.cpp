@@ -46,8 +46,8 @@ CalculationResult CalculationResult::average(
 				"Can only average over results of the same type!");
 		parameters = currentResult._parameters;
 
-		ASSERT(pqOps < 0 || pqOps == (int)currentResult._pqOperations,
-				"Can only average over results of the same type!");
+//		ASSERT(pqOps < 0 || pqOps == (int)currentResult._pqOperations,
+//				"Can only average over results of the same type!");
 		pqOps = currentResult._pqOperations;
 
 		ASSERT(distance < 0 || distance == currentResult._distance, "");

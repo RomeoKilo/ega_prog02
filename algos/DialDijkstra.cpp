@@ -438,7 +438,7 @@ const CalculationResult DialDijkstra::runGoalDirected(
 				const unsigned int targetBucketOffset =
 						static_cast<unsigned int>(edge.getWeight()
 								+ distanceToTarget[other]
-								- distanceToTarget[currentNode]);
+								- distanteOfCurrentToTarget);
 
 				const unsigned int targetBucket = (currentPositionInBQ
 						+ targetBucketOffset) % bucketCount;

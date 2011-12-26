@@ -11,7 +11,7 @@ private:
 	int _index;
 
 	int _item;
-	double _key;
+	int _key;
 
 	void _setIndex(const unsigned int i) {
 		_index = i;
@@ -26,7 +26,7 @@ private:
 		return _index;
 	}
 
-	void _setKey(const double key) {
+	void _setKey(const int key) {
 		_key = key;
 	}
 
@@ -37,7 +37,7 @@ private:
 	}
 
 public:
-	double getKey() const {
+	int getKey() const {
 		return this->_key;
 	}
 
@@ -48,8 +48,7 @@ public:
 
 };
 
-template<typename T>
-std::ostream& operator<<(std::ostream& lhs, const HeapItem &rhs) {
+inline std::ostream& operator<<(std::ostream& lhs, const HeapItem &rhs) {
 	lhs << rhs.getKey();
 	return lhs;
 }

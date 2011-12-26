@@ -6,14 +6,45 @@ class CalculationResult;
 
 class DialDijkstra {
 public:
-	static const CalculationResult runStandard(
-			const AdjacencyArray &graph,
+	/**
+	 * Runs an unoptimized version of Dijkstra using a Bucket Queue
+	 * as PQ data structure.
+	 *
+	 * @param graph the graph upon which Dijkstra operates
+	 * @param source the source node
+	 * @param target the target node
+	 *
+	 * @return the result of the calculation not containing the actual route
+	 */
+	static const CalculationResult runStandard(const AdjacencyArray &graph,
 			const unsigned int source, const unsigned int target);
-	static const CalculationResult runBidirectional(
-			const AdjacencyArray &graph,
+	/**
+	 * Runs a bidirectional version of Dijkstra using a Bucket Queue
+	 * as PQ data structure.
+	 *
+	 * @param graph the graph upon which Dijkstra operates
+	 * @param source the source node
+	 * @param target the target node
+	 *
+	 * @return the result of the calculation not containing the actual route
+	 *
+	 * @see BHDijkstra.hpp for more information about the applied strategy
+	 */
+	static const CalculationResult runBidirectional(const AdjacencyArray &graph,
 			const unsigned int source, const unsigned int target);
-	static const CalculationResult runGoalDirected(
-			const AdjacencyArray &graph,
+	/**
+	 * Runs a goal-directed version of Dijkstra using a Bucket Queue
+	 * as PQ data structure.
+	 *
+	 * @param graph the graph upon which Dijkstra operates
+	 * @param source the source node
+	 * @param target the target node
+	 *
+	 * @return the result of the calculation not containing the actual route
+	 *
+	 * @see BHDijkstra.hpp for more information about the applied strategy
+	 */
+	static const CalculationResult runGoalDirected(const AdjacencyArray &graph,
 			const unsigned int source, const unsigned int target);
 };
 #endif

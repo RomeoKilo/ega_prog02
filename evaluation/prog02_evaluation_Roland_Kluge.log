@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.8.24)  24 DEC 2011 10:15
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.8.24)  24 DEC 2011 10:32
 entering extended mode
  %&-line parsing enabled.
 **prog02_evaluation_Roland_Kluge.tex
@@ -734,8 +734,8 @@ File: test_results.png Graphic file (type png)
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./test_results.png (PNG co
 py)>] [2] [3] (./prog02_evaluation_Roland_Kluge.aux) ) 
 Here is how much of TeX's memory you used:
- 9657 strings out of 495021
- 134748 string characters out of 1181035
+ 9658 strings out of 495021
+ 134754 string characters out of 1181035
  258451 words of memory out of 3000000
  12680 multiletter control sequences out of 15000+50000
  17347 words of font info for 52 fonts, out of 3000000 for 9000
@@ -751,9 +751,9 @@ e/roland/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx2074.600pk></usr/share/texm
 f-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/f
 onts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/p
 ublic/amsfonts/cm/cmsy10.pfb>
-Output written on prog02_evaluation_Roland_Kluge.pdf (3 pages, 168361 bytes).
+Output written on prog02_evaluation_Roland_Kluge.pdf (3 pages, 170334 bytes).
 PDF statistics:
- 324 PDF objects out of 1000 (max. 8388607)
- 15 named destinations out of 1000 (max. 500000)
+ 329 PDF objects out of 1000 (max. 8388607)
+ 16 named destinations out of 1000 (max. 500000)
  62 words of extra memory for PDF output out of 10000 (max. 10000000)
 

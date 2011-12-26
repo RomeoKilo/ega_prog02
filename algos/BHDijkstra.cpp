@@ -41,7 +41,7 @@ const CalculationResult BHDijkstra::runStandard(const AdjacencyArray &graph,
 
 		const unsigned int currentNode = top.getItem();
 		heapItemForNode[currentNode] = -1;
-		const double currentDist = top.getKey();
+		const unsigned int currentDist = top.getKey();
 		ASSERT(currentDist == distances[currentNode],
 				"Distances are not consistent anymore!");
 
@@ -54,7 +54,7 @@ const CalculationResult BHDijkstra::runStandard(const AdjacencyArray &graph,
 				const Edge &edge = iterator.next();
 				const unsigned int other = edge.getTarget();
 
-				const double relaxedDistance = distances[currentNode]
+				const unsigned int relaxedDistance = distances[currentNode]
 						+ edge.getWeight();
 				// target node not processed, yet
 				if (maxValue == distances[other]) {
@@ -153,7 +153,7 @@ const CalculationResult BHDijkstra::runBidirectional(
 
 			++pqOps;
 
-			ASSERT(top.getKey() == fwDistances[currentNode],
+			ASSERT(top.getKey() == static_cast<int>(fwDistances[currentNode]),
 					"Node distances inconsistent!")
 
 			// current node has been settled by both queues
@@ -166,7 +166,7 @@ const CalculationResult BHDijkstra::runBidirectional(
 				const Edge &edge = iterator.next();
 				const unsigned int other = edge.getTarget();
 
-				const double relaxedDistance = fwDistances[currentNode]
+				const unsigned int relaxedDistance = fwDistances[currentNode]
 						+ edge.getWeight();
 				const unsigned int pathCost = fwDistances[currentNode]
 						+ edge.getWeight() + bwDistances[other];
@@ -206,7 +206,7 @@ const CalculationResult BHDijkstra::runBidirectional(
 			bwPoppedFromQueue[currentNode] = true;
 			bwHeapItemForNode[currentNode] = -1;
 
-			ASSERT(top.getKey() == bwDistances[currentNode],
+			ASSERT(top.getKey() == static_cast<int>(bwDistances[currentNode]),
 					"Node distances inconsistent!")
 			// current node has been settled by both queues
 			if (fwPoppedFromQueue[currentNode]) {
@@ -218,7 +218,7 @@ const CalculationResult BHDijkstra::runBidirectional(
 				const Edge &edge = iterator.next();
 				const unsigned int other = edge.getSource();
 
-				const double relaxedDistance = bwDistances[currentNode]
+				const unsigned int relaxedDistance = bwDistances[currentNode]
 						+ edge.getWeight();
 				const unsigned int pathCost = bwDistances[currentNode]
 						+ edge.getWeight() + fwDistances[other];
@@ -321,10 +321,10 @@ const CalculationResult BHDijkstra::runGoalDirected(const AdjacencyArray &graph,
 				const Edge &edge = iterator.next();
 				const unsigned int other = edge.getTarget();
 
-				const double relaxedDistance = distances[currentNode]
+				const unsigned int relaxedDistance = distances[currentNode]
 						+ edge.getWeight();
-				const double goalDistance = relaxedDistance
-						+ graph.distanceBound(other, target);
+				const int goalDistance = static_cast<int>(relaxedDistance
+						+ graph.distanceBound(other, target));
 				if (distances[other] > relaxedDistance) {
 					if (-1 == heapItemForNode[other]) {
 

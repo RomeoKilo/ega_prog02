@@ -2,7 +2,7 @@
 
 #include <limits>
 
-unsigned int BinaryHeap::insert(const unsigned int item, const double key) {
+unsigned int BinaryHeap::insert(const unsigned int item, const int key) {
 	_items.push_back(HeapItem(item, key, _binaryHeap.size()));
 	_binaryHeap.push_back(_items.size() - 1);
 	HeapItem &result = _items.at(_binaryHeap.back());
@@ -37,7 +37,7 @@ void BinaryHeap::deleteMin() {
 	}
 }
 
-void BinaryHeap::decreaseKey(const unsigned int heapItem, const double key) {
+void BinaryHeap::decreaseKey(const unsigned int heapItem, const int key) {
 	HeapItem &item = _items[heapItem];
 	item._setKey(key);
 	_siftUp(item);

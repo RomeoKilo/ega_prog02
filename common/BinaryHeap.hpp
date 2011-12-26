@@ -48,18 +48,49 @@ public:
 	explicit BinaryHeap() {
 	}
 
-	unsigned int insert(const unsigned int item, const double key);
-	void decreaseKey(const unsigned int heapItem, const double key);
+	/**
+	 * Inserts a specific item into the queue and returns
+	 * a reference to this item.
+	 *
+	 * For future operations, this return value is needed in order
+	 * to address items in the PQ.
+	 *
+	 * The indices are currently unique over the lifetime of the PQ.
+	 */
+	unsigned int insert(const unsigned int item, const int key);
+
+	/**
+	 * Decreases the key of the given heap item.
+	 *
+	 * @param heapItem	the item the key of which is to be decreased
+	 * 					this value can be obtained as the return value
+	 * 					of the insert method
+	 * @param key		the new key
+	 */
+	void decreaseKey(const unsigned int heapItem, const int key);
+
+	/**
+	 * Returns a reference to the element with minimal key.
+	 */
 	const HeapItem &min() const {
 		return _items.at(_binaryHeap.at(0));
 	}
 
+	/**
+	 * Removes the element with minimal key from the queue
+	 */
 	void deleteMin();
 
+	/**
+	 * Returns the number of elements currently stored in the PQ
+	 */
 	unsigned int size() const {
 		return _binaryHeap.size();
 	}
 
+	/**
+	 * Returns whether the PQ has size 0.
+	 */
 	bool isEmpty() const {
 		return 0 == this->size();
 	}

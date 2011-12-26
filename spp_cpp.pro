@@ -2,7 +2,7 @@ TARGET = Dijkstra
 CONFIG += stl \
     debug_and_release
 QT -= core gui
-QMAKE_CXXFLAGS_DEBUG += -ggdb
+QMAKE_CXXFLAGS_DEBUG += -ggdb3
 # QMAKE_CXXFLAGS_DEBUG += -Wno-unused-but-set-variable
 QMAKE_CXXFLAGS_RELEASE += -O3
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
